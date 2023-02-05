@@ -1,0 +1,392 @@
+
+
+
+
+Network Working Group                                            T. Graf
+Internet-Draft                                                  Swisscom
+Intended status: Standards Track                               B. Claise
+Expires: 9 August 2023                                            Huawei
+                                                           A. Huang Feng
+                                                               INSA-Lyon
+                                                         5 February 2023
+
+
+   Support of Network Observation Timestamping in YANG Notifications
+               draft-tgraf-yang-push-observation-time-00
+
+Abstract
+
+   This document extends the YANG Notification header to support besides
+   message export also network observation timestamping.  In case of
+   "push-change-update" notifications to describe when the network state
+   change was observed.  In case of "push-update" from when to when
+   measurements where accounted.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 9 August 2023.
+
+Copyright Notice
+
+   Copyright (c) 2023 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+
+
+
+
+
+
+
+Graf, et al.              Expires 9 August 2023                 [Page 1]
+
+Internet-Draft     YANG Notifications Observation Time     February 2023
+
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Extend the Streaming Update Notifications . . . . . . . . . .   3
+   3.  The "ietf-yang-push-revision" Module  . . . . . . . . . . . .   4
+     3.1.  Data Model Overview . . . . . . . . . . . . . . . . . . .   4
+     3.2.  YANG Module . . . . . . . . . . . . . . . . . . . . . . .   5
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+   6.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   5
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .   5
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   6
+
+1.  Introduction
+
+   To correlate network data among different Network Telemetry planes as
+   described in Section 3.1 of [RFC9232] or among different YANG push
+   subscription types defined in Section 3.1 of [RFC8641], network
+   observation timestamping describing when the state change was
+   observed or from when to when the data was accounted is essential to
+   understand the timely relationship among these different planes and
+   YANG push subscription types.
+
+   With <xref target="I-D.tgraf-netconf-notif-sequencing"/> the delay
+   between the YANG Notification export and the arrival at the
+   downstream system storing the data can be measured.  With network
+   observation timestamping described in this document, the delay
+   between the network observation and the data export of the YANG push
+   publisher process can be measured as well, extending the delay
+   measurement scope from the time the network observation and storing
+   the data.
+
+
+
+
+
+
+
+
+
+Graf, et al.              Expires 9 August 2023                 [Page 2]
+
+Internet-Draft     YANG Notifications Observation Time     February 2023
+
+
+2.  Extend the Streaming Update Notifications
+
+   Besides the Subscription ID as described in Section 3.7 of [RFC8641],
+   the following network observation time metadata object is part of a
+   "push-update" or "push-change-update" notification.  Depending on
+   subscription type described in Section 3.1 of [RFC8641], the semantic
+   meaning of the populated timestamp is different.
+
+   observation-time:  Describes in case of a "periodical" subscription
+      when the accounting has started.  By comparing the observation-
+      time of two YANG Notifications, the time from when to when the
+      measurements where accounted can be deducted.  In case of a "on-
+      change" subscription it describes the time when the network state
+      change was observed after the subscription was initially
+      established.  In case of an "on-change sync on start" subscription
+      it describes the time when the network state change was observed
+      before the subscription was established.
+
+   Figure 1 provides an example of a JSON encoded, [RFC8259], "push-
+   change-update" notification message over HTTPS-based
+   [I-D.ietf-netconf-https-notif] or UDP-based
+   [I-D.ietf-netconf-udp-notif] transport for the same subscription.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Graf, et al.              Expires 9 August 2023                 [Page 3]
+
+Internet-Draft     YANG Notifications Observation Time     February 2023
+
+
+{
+    "ietf-notification:notification": {
+        "eventTime": "2023-02-04T16:30:11.22Z",
+        "sysName": "example-router",
+        "sequenceNumbe": 187653,
+        "ietf-yang-push:push-update": {
+            "id": 1011,{
+            "observation-time": "2023-02-04T16:30:09.44Z",{
+            "module": "ietf-interfaces",{
+            "namespace": "urn:ietf:params:xml:ns:yang:ietf-interfaces",{
+            "revision": "2014-05-08",{
+            "revision-label": "1.0.0",{
+            "datastore-xpath-filter": "ietf-interfaces:interfaces",
+            "datastore-contents": {
+                "ietf-interfaces:interface": {
+                    "name": {
+                        "eth0": {
+                                "oper-status": "up",
+                                }
+                             }
+                          }
+                       }
+                    }
+                 }
+              }
+           }
+         }
+      }
+   }
+}
+
+       Figure 1: JSON Push Example for a subscription-modified
+                         notification message
+
+3.  The "ietf-yang-push-revision" Module
+
+3.1.  Data Model Overview
+
+   This YANG module augments the "ietf-yang-push" module with the
+   observation-time in the "push-update" and "push-change-update"
+   streaming update notifications.
+
+3.1.1.  Tree View
+
+   The following is the YANG tree diagram [RFC8340] for the ietf-yang-
+   push-netobs-timestamping YANG module
+
+   module: ietf-yang-push-revision
+
+
+
+Graf, et al.              Expires 9 August 2023                 [Page 4]
+
+Internet-Draft     YANG Notifications Observation Time     February 2023
+
+
+3.1.2.  Full Tree View
+
+   The following is the YANG tree diagram [RFC8340] for the ietf-yang-
+   push-netobs-timestamping augmentation within the ietf-subscribed-
+   notifications, including the RPCs and notifications.
+
+   module: ietf-yang-push-netobs-timestamping
+
+3.2.  YANG Module
+
+   The YANG module has one leave augmenting the model of Subscription to
+   YANG Notifications [RFC8639].
+
+   <CODE BEGINS>
+     file "ietf-yang-push-netobs-timestamping@2023-02-05.yang"
+   module ietf-yang-push-netobs-timestamping {
+   )
+   <CODE ENDS>
+
+4.  Security Considerations
+
+   The security considerations for the YANG notifications subscription
+   mechanism are described in [RFC8641].  This document adds no
+   additional security considerations.
+
+5.  IANA Considerations
+
+   This document has no IANA actions.
+
+6.  Acknowledgements
+
+   The authors would like to thank xxx for their review and valuable
+   comments.
+
+7.  References
+
+7.1.  Normative References
+
+   [RFC8639]  Voit, E., Clemm, A., Gonzalez Prieto, A., Nilsen-Nygaard,
+              E., and A. Tripathy, "Subscription to YANG Notifications",
+              RFC 8639, DOI 10.17487/RFC8639, September 2019,
+              <https://www.rfc-editor.org/info/rfc8639>.
+
+   [RFC8641]  Clemm, A. and E. Voit, "Subscription to YANG Notifications
+              for Datastore Updates", RFC 8641, DOI 10.17487/RFC8641,
+              September 2019, <https://www.rfc-editor.org/info/rfc8641>.
+
+7.2.  Informative References
+
+
+
+Graf, et al.              Expires 9 August 2023                 [Page 5]
+
+Internet-Draft     YANG Notifications Observation Time     February 2023
+
+
+   [I-D.ietf-netconf-https-notif]
+              Jethanandani, M. and K. Watsen, "An HTTPS-based Transport
+              for YANG Notifications", Work in Progress, Internet-Draft,
+              draft-ietf-netconf-https-notif-13, 4 November 2022,
+              <https://www.ietf.org/archive/id/draft-ietf-netconf-https-
+              notif-13.txt>.
+
+   [I-D.ietf-netconf-udp-notif]
+              Zheng, G., Zhou, T., Graf, T., Francois, P., Feng, A. H.,
+              and P. Lucente, "UDP-based Transport for Configured
+              Subscriptions", Work in Progress, Internet-Draft, draft-
+              ietf-netconf-udp-notif-08, 12 September 2022,
+              <https://www.ietf.org/archive/id/draft-ietf-netconf-udp-
+              notif-08.txt>.
+
+   [RFC8259]  Bray, T., Ed., "The JavaScript Object Notation (JSON) Data
+              Interchange Format", STD 90, RFC 8259,
+              DOI 10.17487/RFC8259, December 2017,
+              <https://www.rfc-editor.org/info/rfc8259>.
+
+   [RFC8340]  Bjorklund, M. and L. Berger, Ed., "YANG Tree Diagrams",
+              BCP 215, RFC 8340, DOI 10.17487/RFC8340, March 2018,
+              <https://www.rfc-editor.org/info/rfc8340>.
+
+   [RFC9232]  Song, H., Qin, F., Martinez-Julia, P., Ciavaglia, L., and
+              A. Wang, "Network Telemetry Framework", RFC 9232,
+              DOI 10.17487/RFC9232, May 2022,
+              <https://www.rfc-editor.org/info/rfc9232>.
+
+Authors' Addresses
+
+   Thomas Graf
+   Swisscom
+   Binzring 17
+   CH-8045 Zurich
+   Switzerland
+   Email: thomas.graf@swisscom.com
+
+
+   Benoit Claise
+   Huawei
+   Email: benoit.claise@huawei.com
+
+
+   Alex Huang Feng
+   INSA-Lyon
+   Lyon
+   France
+
+
+
+Graf, et al.              Expires 9 August 2023                 [Page 6]
+
+Internet-Draft     YANG Notifications Observation Time     February 2023
+
+
+   Email: alex.huang-feng@insa-lyon.fr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Graf, et al.              Expires 9 August 2023                 [Page 7]

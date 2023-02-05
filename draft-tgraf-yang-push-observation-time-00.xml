@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?rfc toc="yes"?>
+<?rfc tocompact="yes"?>
+<?rfc tocdepth="2"?>
+<?rfc tocindent="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<?rfc compact="yes"?>
+<?rfc subcompact="no"?>
+<rfc category="std" docName="draft-tgraf-yang-push-observation-time-00"
+     ipr="trust200902">
+  <front>
+    <title abbrev="YANG Notifications Observation Time">Support of Network
+    Observation Timestamping in YANG Notifications</title>
+
+    <author fullname="Thomas Graf" initials="T" surname="Graf">
+      <organization>Swisscom</organization>
+
+      <address>
+        <postal>
+          <street>Binzring 17</street>
+
+          <city>Zurich</city>
+
+          <code>8045</code>
+
+          <country>Switzerland</country>
+        </postal>
+
+        <email>thomas.graf@swisscom.com</email>
+      </address>
+    </author>
+
+    <author fullname="Benoit Claise" initials="B" surname="Claise">
+      <organization>Huawei</organization>
+
+      <address>
+        <email>benoit.claise@huawei.com</email>
+      </address>
+    </author>
+
+    <author fullname="Alex Huang Feng" initials="A." surname="Huang Feng">
+      <organization>INSA-Lyon</organization>
+
+      <address>
+        <postal>
+          <street/>
+
+          <city>Lyon</city>
+
+          <region/>
+
+          <code/>
+
+          <country>France</country>
+        </postal>
+
+        <phone/>
+
+        <facsimile/>
+
+        <email>alex.huang-feng@insa-lyon.fr</email>
+
+        <uri/>
+      </address>
+    </author>
+
+    <date day="5" month="February" year="2023"/>
+
+    <abstract>
+      <t>This document extends the YANG Notification header to support besides
+      message export also network observation timestamping. In case of
+      "push-change-update" notifications to describe when the network state
+      change was observed. In case of "push-update" from when to when
+      measurements where accounted.</t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section anchor="Introduction" title="Introduction">
+      <t>To correlate network data among different Network Telemetry planes as
+      described in Section 3.1 of <xref target="RFC9232"/> or among different
+      YANG push subscription types defined in Section 3.1 of <xref
+      target="RFC8641"/>, network observation timestamping describing when the
+      state change was observed or from when to when the data was accounted is
+      essential to understand the timely relationship among these different
+      planes and YANG push subscription types.</t>
+
+      <t>With &lt;xref target="I-D.tgraf-netconf-notif-sequencing"/&gt; the
+      delay between the YANG Notification export and the arrival at the
+      downstream system storing the data can be measured. With network
+      observation timestamping described in this document, the delay between
+      the network observation and the data export of the YANG push publisher
+      process can be measured as well, extending the delay measurement scope
+      from the time the network observation and storing the data.</t>
+    </section>
+
+    <section anchor="Streaming-Update"
+             title="Extend the Streaming Update Notifications">
+      <t>Besides the Subscription ID as described in Section 3.7 of <xref
+      target="RFC8641"/>, the following network observation time metadata
+      object is part of a "push-update" or "push-change-update" notification.
+      Depending on subscription type described in Section 3.1 of <xref
+      target="RFC8641"/>, the semantic meaning of the populated timestamp is
+      different.</t>
+
+      <dl>
+        <dt>observation-time:</dt>
+
+        <dd>Describes in case of a "periodical" subscription when the
+        accounting has started. By comparing the observation-time of two YANG
+        Notifications, the time from when to when the measurements where
+        accounted can be deducted. In case of a "on-change" subscription it
+        describes the time when the network state change was observed after
+        the subscription was initially established. In case of an "on-change
+        sync on start" subscription it describes the time when the network
+        state change was observed before the subscription was
+        established.</dd>
+      </dl>
+
+      <t><xref target="subscription_modified_example_json_fig"/> provides an
+      example of a JSON encoded, <xref target="RFC8259"/>,
+      "push-change-update" notification message over HTTPS-based <xref
+      target="I-D.ietf-netconf-https-notif"/> or UDP-based <xref
+      target="I-D.ietf-netconf-udp-notif"/> transport for the same
+      subscription.</t>
+
+      <figure anchor="subscription_modified_example_json_fig"
+              title="JSON Push Example for a subscription-modified notification message">
+        <artwork><![CDATA[
+{
+    "ietf-notification:notification": {
+        "eventTime": "2023-02-04T16:30:11.22Z",
+        "sysName": "example-router",
+        "sequenceNumbe": 187653,
+        "ietf-yang-push:push-update": {
+            "id": 1011,{
+            "observation-time": "2023-02-04T16:30:09.44Z",{
+            "module": "ietf-interfaces",{
+            "namespace": "urn:ietf:params:xml:ns:yang:ietf-interfaces",{
+            "revision": "2014-05-08",{
+            "revision-label": "1.0.0",{
+            "datastore-xpath-filter": "ietf-interfaces:interfaces",
+            "datastore-contents": {
+                "ietf-interfaces:interface": {
+                    "name": {
+                        "eth0": {
+                                "oper-status": "up",
+                                }
+                             }
+                          }
+                       }
+                    }
+                 }
+              }
+           }
+         }
+      }
+   }
+}
+        ]]></artwork>
+      </figure>
+    </section>
+
+    <section anchor="YANG-push-revision-module"
+             title="The &quot;ietf-yang-push-revision&quot; Module">
+      <section anchor="YANG-revision-model" title="Data Model Overview">
+        <t>This YANG module augments the "ietf-yang-push" module with the
+        observation-time in the "push-update" and "push-change-update"
+        streaming update notifications.</t>
+
+        <section anchor="Tree View" title="Tree View">
+          <t>The following is the YANG tree diagram <xref target="RFC8340"/>
+          for the ietf-yang-push-netobs-timestamping YANG module</t>
+
+          <t><figure>
+              <artwork><![CDATA[
+module: ietf-yang-push-revision
+]]></artwork>
+            </figure></t>
+        </section>
+
+        <section anchor="Full Tree View" title="Full Tree View">
+          <t>The following is the YANG tree diagram <xref target="RFC8340"/>
+          for the ietf-yang-push-netobs-timestamping augmentation within the
+          ietf-subscribed-notifications, including the RPCs and
+          notifications.</t>
+
+          <t><figure>
+              <artwork><![CDATA[
+module: ietf-yang-push-netobs-timestamping
+]]></artwork>
+            </figure></t>
+        </section>
+      </section>
+
+      <section anchor="YANG-revision-module" title="YANG Module">
+        <t>The YANG module has one leave augmenting the model of <xref
+        target="RFC8639">Subscription to YANG Notifications</xref>.</t>
+
+        <t><figure>
+            <artwork><![CDATA[
+<CODE BEGINS> file "ietf-yang-push-netobs-timestamping@2023-02-05.yang"
+module ietf-yang-push-netobs-timestamping {
+)
+<CODE ENDS>]]></artwork>
+          </figure></t>
+      </section>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+      <t>The security considerations for the YANG notifications subscription
+      mechanism are described in <xref target="RFC8641"/>. This document adds
+      no additional security considerations.</t>
+    </section>
+
+    <section anchor="IANA_Considerations" title="IANA Considerations">
+      <t>This document has no IANA actions.</t>
+    </section>
+
+    <section anchor="Acknowledgements" title="Acknowledgements">
+      <t>The authors would like to thank xxx for their review and valuable
+      comments.</t>
+    </section>
+  </middle>
+
+  <back>
+    <references title="Normative References">
+       
+
+      <?rfc include='reference.RFC.8639'?>
+
+       
+
+      <?rfc include='reference.RFC.8641'?>
+
+       &gt;?rfc include='reference.I-D.tgraf-netconf-notif-sequencing'?&gt; 
+    </references>
+
+    <references title="Informative References">
+      <?rfc include='reference.RFC.8259'?>
+
+      <?rfc include='reference.RFC.8340'?>
+
+      <?rfc include='reference.RFC.9232'?>
+
+      <?rfc include='reference.I-D.ietf-netconf-https-notif'?>
+
+      <?rfc include='reference.I-D.ietf-netconf-udp-notif'?>
+    </references>
+  </back>
+</rfc>
