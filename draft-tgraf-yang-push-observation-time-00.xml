@@ -165,9 +165,10 @@
       </figure>
     </section>
 
-    <section anchor="YANG-push-revision-module"
-             title="The &quot;ietf-yang-push-revision&quot; Module">
-      <section anchor="YANG-revision-model" title="Data Model Overview">
+    <section anchor="YANG-push-netobs-timestamping-module"
+             title="The &quot;ietf-yang-push-netobs-timestamping&quot; Module">
+      <section anchor="YANG-netobs-timestamping-model"
+               title="Data Model Overview">
         <t>This YANG module augments the "ietf-yang-push" module with the
         observation-time in the "push-update" and "push-change-update"
         streaming update notifications.</t>
@@ -178,7 +179,7 @@
 
           <t><figure>
               <artwork><![CDATA[
-module: ietf-yang-push-revision
+module: ietf-yang-push-netobs-timestamping
 ]]></artwork>
             </figure></t>
         </section>
@@ -197,7 +198,7 @@ module: ietf-yang-push-netobs-timestamping
         </section>
       </section>
 
-      <section anchor="YANG-revision-module" title="YANG Module">
+      <section anchor="YANG-netobs-timestamping-module" title="YANG Module">
         <t>The YANG module has one leave augmenting the model of <xref
         target="RFC8639">Subscription to YANG Notifications</xref>.</t>
 
