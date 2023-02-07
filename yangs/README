@@ -1,0 +1,6 @@
+## YANG
+
+```shell
+$ ln -s ietf-yang-push-netobs-timestamping-00.yang ietf-yang-push-netobs-timestamping.yang
+$ pyang ietf-yang-push-netobs-timestamping.yang -f tree
+```
