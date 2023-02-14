@@ -506,7 +506,9 @@ module ietf-yang-push-netobs-timestamping {
     </section>
 
     <section anchor="IANA_Considerations" title="IANA Considerations">
-      <t>This document has no IANA actions.</t>
+      <t>TBD: ask the YANG Module name to IANA</t>
+      <t>TBD: ask a new XML namespace for the xml Schema</t>
+      <!-- <t>This document has no IANA actions.</t> -->
     </section>
 
     <section anchor="Acknowledgements" title="Acknowledgements">

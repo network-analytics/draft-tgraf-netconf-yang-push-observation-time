@@ -526,7 +526,9 @@ Internet-Draft     YANG Notifications Observation Time     February 2023
 
 5.  IANA Considerations
 
-   This document has no IANA actions.
+   TBD: ask the YANG Module name to IANA
+
+   TBD: ask a new XML namespace for the xml Schema
 
 6.  Acknowledgements
 
@@ -550,9 +552,7 @@ Internet-Draft     YANG Notifications Observation Time     February 2023
               RFC 8639, DOI 10.17487/RFC8639, September 2019,
               <https://www.rfc-editor.org/info/rfc8639>.
 
-   [RFC8641]  Clemm, A. and E. Voit, "Subscription to YANG Notifications
-              for Datastore Updates", RFC 8641, DOI 10.17487/RFC8641,
-              September 2019, <https://www.rfc-editor.org/info/rfc8641>.
+
 
 
 
@@ -561,6 +561,10 @@ Graf, et al.              Expires 9 August 2023                [Page 10]
 
 Internet-Draft     YANG Notifications Observation Time     February 2023
 
+
+   [RFC8641]  Clemm, A. and E. Voit, "Subscription to YANG Notifications
+              for Datastore Updates", RFC 8641, DOI 10.17487/RFC8641,
+              September 2019, <https://www.rfc-editor.org/info/rfc8641>.
 
 7.2.  Informative References
 
@@ -606,10 +610,6 @@ Authors' Addresses
    Benoit Claise
    Huawei
    Email: benoit.claise@huawei.com
-
-
-
-
 
 
 
