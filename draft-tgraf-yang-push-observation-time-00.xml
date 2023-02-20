@@ -138,10 +138,10 @@
    "ietf-notification:notification": {
       "eventTime": "2023-02-04T16:30:11.22Z",
       "sysName": "example-router",
-      "sequenceNumbe": 187653,
+      "sequenceNumber": 187653,
       "ietf-yang-push:push-update": {
          "id": 1011,
-         "observation-time": "2023-02-04T16:30:09.44Z",
+         "start-observation-time": "2023-02-04T16:30:09.44Z",
          "module": "ietf-interfaces",
          "namespace": "urn:ietf:params:xml:ns:yang:ietf-interfaces",
          "revision": "2014-05-08",
