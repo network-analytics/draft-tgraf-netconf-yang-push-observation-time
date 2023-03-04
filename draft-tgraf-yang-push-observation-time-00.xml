@@ -94,6 +94,11 @@
       observation and the data export of the YANG push publisher process can
       be measured as well, extending the delay measurement scope from the time
       the network observation and storing the data.</t>
+
+      <t>By extending the YANG Notification header with the YANG objects
+      observation-time for periodical and state-changed-observation-time for
+      on-change subscriptions these use cases can be addressed
+      accordingly.</t>
     </section>
 
     <section title="Terminologies">

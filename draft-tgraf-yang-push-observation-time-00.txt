@@ -96,16 +96,16 @@ Table of Contents
    measured as well, extending the delay measurement scope from the time
    the network observation and storing the data.
 
+   By extending the YANG Notification header with the YANG objects
+   observation-time for periodical and state-changed-observation-time
+   for on-change subscriptions these use cases can be addressed
+   accordingly.
+
 2.  Terminologies
 
    The following terms are defined in [RFC8639] and are not redefined
    here:
 
-   Publisher
-
-   Receiver
-
-   Subscription
 
 
 
@@ -113,6 +113,12 @@ Graf, et al.            Expires 5 September 2023                [Page 2]
 
 Internet-Draft     YANG Notifications Observation Time        March 2023
 
+
+   Publisher
+
+   Receiver
+
+   Subscription
 
    In addition, this document defines the following terms:
 
@@ -145,12 +151,6 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
    change-update" notification message over HTTPS-based
    [I-D.ietf-netconf-https-notif] or UDP-based
    [I-D.ietf-netconf-udp-notif] transport for the same subscription.
-
-
-
-
-
-
 
 
 
