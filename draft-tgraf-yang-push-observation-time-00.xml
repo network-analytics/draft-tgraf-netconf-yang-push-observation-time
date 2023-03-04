@@ -68,14 +68,12 @@
       </address>
     </author>
 
-    <date day="18" month="February" year="2023"/>
+    <date day="4" month="March" year="2023"/>
 
     <abstract>
-      <t>This document extends the YANG Notification header to support besides
-      message export also network observation timestamping. In case of
-      "push-change-update" notifications to describe when the network state
-      change was observed. In case of "push-update" from when to when
-      measurements where accounted.</t>
+      <t>This document extends the YANG Notification header with the YANG
+      objects observation timestamping, both for the "push-update" and
+      "push-change-update" notifications.</t>
     </abstract>
   </front>
 
@@ -98,6 +96,25 @@
       the network observation and storing the data.</t>
     </section>
 
+    <section title="Terminologies">
+      <t>The following terms are defined in <xref target="RFC8639"/> and are
+      not redefined here:</t>
+
+      <t>Publisher</t>
+
+      <t>Receiver</t>
+
+      <t>Subscription</t>
+
+      <t>In addition, this document defines the following terms:</t>
+
+      <t>Observation-time: Describes the measurement observation time for the
+      "push-update" notification in a "periodical" subscription.</t>
+
+      <t>State-changed-observation-time: Describes the time when the network
+      state change was observed.</t>
+    </section>
+
     <section anchor="Streaming-Update"
              title="Extend the Streaming Update Notifications">
       <t>Besides the Subscription ID as described in Section 3.7 of <xref
@@ -106,15 +123,15 @@
       notifications.</t>
 
       <dl>
-        <dt>start-observation-time:</dt>
+        <dt>observation-time:</dt>
 
-        <dd>Describes in the "push-update" notification in a "periodical"
-        subscription when the accounting has started. By comparing the
-        "start-observation-time" of two "push-update" notifications, the the
-        collector can deduce from when to when the measurements where
-        recorded.</dd>
+        <dd>Describes the measurement observation time for the "push-update"
+        notification in a "periodical" subscription. By comparing the
+        "observation-time" of two "push-update" notifications, the collector
+        can deduce the actual cadence of the measurements, and compare it with
+        the configured one.</dd>
 
-        <dt>changed-observation-time:</dt>
+        <dt>state-changed-observation-time:</dt>
 
         <dd>Describes in the "push-change-update" notification in a
         "on-change" subscription the time when the network state change was
@@ -141,7 +158,7 @@
       "sequenceNumber": 187653,
       "ietf-yang-push:push-update": {
          "id": 1011,
-         "start-observation-time": "2023-02-04T16:30:09.44Z",
+         "observation-time": "2023-02-04T16:30:09.44Z",
          "module": "ietf-interfaces",
          "namespace": "urn:ietf:params:xml:ns:yang:ietf-interfaces",
          "revision": "2014-05-08",
@@ -180,9 +197,9 @@
 module: ietf-yang-push-netobs-timestamping
 
   augment /yp:push-update:
-    +--ro start-observation-time?   yang:date-and-time
+    +--ro observation-time?   yang:date-and-time
   augment /yp:push-change-update:
-    +--ro changed-observation-time?   yang:date-and-time
+    +--ro state-changed-observation-time?   yang:date-and-time
 ]]></artwork>
             </figure></t>
         </section>
@@ -346,7 +363,7 @@ module: ietf-yang-push
     |  +--ro id?                            sn:subscription-id
     |  +--ro datastore-contents?            <anydata>
     |  +--ro incomplete-update?             empty
-    |  +--ro ypnt:start-observation-time?   yang:date-and-time
+    |  +--ro ypnt:observation-time?   yang:date-and-time
     +---n push-change-update {on-change}?
        +--ro id?                              sn:subscription-id
        +--ro datastore-changes
@@ -361,7 +378,7 @@ module: ietf-yang-push
        |        +--ro where?       enumeration
        |        +--ro value?       <anydata>
        +--ro incomplete-update?               empty
-       +--ro ypnt:changed-observation-time?   yang:date-and-time
+       +--ro ypnt:state-changed-observation-time?   yang:date-and-time
 
 ]]></artwork>
             </figure></t>
@@ -403,8 +420,8 @@ module ietf-yang-push-netobs-timestamping {
                <mailto:alex.huang-feng@insa-lyon.fr>";
 
   description
-    "Defines YANG push event notification header with the observation
-    time in push-update and push-change-update notifications.
+    "Defines YANG push event notification with the observation time in 
+    push-update and push-change-update notifications.
 
     Copyright (c) 2023 IETF Trust and the persons identified as
     authors of the code.  All rights reserved.
@@ -441,7 +458,7 @@ module ietf-yang-push-netobs-timestamping {
     description
       "This grouping adds the start timestamp and the end timestamp of the
       observed metrics.";
-    leaf start-observation-time {
+    leaf observation-time {
       type yang:date-and-time;
       description
         "This is the time when metrics started counting.";
@@ -451,7 +468,7 @@ module ietf-yang-push-netobs-timestamping {
   grouping yang-push-change-update-obs-timestamp {
     description
       "This grouping adds the timestamp of the recorded event.";
-    leaf changed-observation-time {
+    leaf state-changed-observation-time {
       type yang:date-and-time;
       description
         "This is the time when event happened.";
@@ -485,16 +502,69 @@ module ietf-yang-push-netobs-timestamping {
     </section>
 
     <section anchor="IANA_Considerations" title="IANA Considerations">
-      <t>TBD: ask the YANG Module name to IANA</t>
+      <t>This document describes the URI used for the IETF XML Registry and
+      registers a new YANG module name.</t>
 
-      <t>TBD: ask a new XML namespace for the xml Schema</t>
+      <section anchor="IANA_URI" title="URI">
+        <t>IANA is requested to add this document as a reference in the
+        following URI in the IETF XML Registry <xref target="RFC3688"/>.</t>
 
-      <!-- <t>This document has no IANA actions.</t> -->
+        <dl>
+          <dt>URI:</dt>
+
+          <dd>urn:ietf:params:xml:ns:yang:ietf-yang-push-netobs-timestamping:1.0</dd>
+
+          <dt>Registrant Contact:</dt>
+
+          <dd>The IESG.</dd>
+
+          <dt>XML:</dt>
+
+          <dd>N/A; the requested URI is an XML namespace.</dd>
+
+          <dt>Reference:</dt>
+
+          <dd>RFC5277; RFC-to-be</dd>
+        </dl>
+      </section>
+
+      <section anchor="IANA_YANG_module_name" title="YANG module name">
+        <t>This document registers the following YANG module in the YANG
+        Module Names Registry <xref target="RFC6020"/>, within the "YANG
+        Parameters" registry:</t>
+
+        <dl>
+          <dt>name:</dt>
+
+          <dd>ietf-notification</dd>
+
+          <dt>namespace:</dt>
+
+          <dd>urn:ietf:params:xml:ns:yang:ietf-yang-push-netobs-timestamping:1.0</dd>
+
+          <dt>prefix:</dt>
+
+          <dd>ypnt</dd>
+
+          <dt>Reference:</dt>
+
+          <dd>RFC-to-bee</dd>
+        </dl>
+      </section>
+    </section>
+
+    <section anchor="Operational" title="Operational Considerations">
+      <section anchor="on_chang_sync_on_start" title="On Change Sync On Start">
+        <t>For "on-change sync on start" subscriptions, if the timestamp for
+        the network state change was observed before the subscription was
+        established and is not recorded in the YANG datastore, then no
+        timestamp should be populated to state-changed-observation-time.</t>
+      </section>
     </section>
 
     <section anchor="Acknowledgements" title="Acknowledgements">
-      <t>The authors would like to thank xxx for their review and valuable
-      comments.</t>
+      <t>The authors would like to thank Rob Wilton and Nick Corran for their
+      review and valuable comments.</t>
     </section>
   </middle>
 
@@ -504,7 +574,9 @@ module ietf-yang-push-netobs-timestamping {
 
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.8641.xml'?>
 
-      <!-- <?rfc include='http://xml.resource.org/public/rfc/bibxml-ids/reference.I-D.tgraf-netconf-notif-sequencing.xml'?> -->
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3688.xml'?>
+
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.6020.xml'?>
 
       <reference anchor="I-D.tgraf-netconf-notif-sequencing" target="">
         <front>
