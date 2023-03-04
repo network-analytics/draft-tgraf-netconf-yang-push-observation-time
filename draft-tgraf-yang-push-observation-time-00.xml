@@ -563,8 +563,9 @@ module ietf-yang-push-netobs-timestamping {
     </section>
 
     <section anchor="Acknowledgements" title="Acknowledgements">
-      <t>The authors would like to thank Rob Wilton and Nick Corran for their
-      review and valuable comments.</t>
+      <t>The authors would like to thank Rob Wilton, Nick Corran, Pierre
+      Francois Ahmed Elhassany and Jean Quilbeuf for their review and valuable
+      comments.</t>
     </section>
   </middle>
 
