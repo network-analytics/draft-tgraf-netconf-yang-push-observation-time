@@ -68,7 +68,7 @@
       </address>
     </author>
 
-    <date day="4" month="March" year="2023"/>
+    <date day="5" month="March" year="2023"/>
 
     <abstract>
       <t>This document extends the YANG Notification header with the YANG
@@ -559,7 +559,8 @@ module ietf-yang-push-netobs-timestamping {
     </section>
 
     <section anchor="Operational" title="Operational Considerations">
-      <section anchor="on_chang_sync_on_start" title="On Change Sync On Start">
+      <section anchor="on_chang_sync_on_start"
+               title="On Change Sync On Start Subscription">
         <t>For "on-change sync on start" subscriptions, if the timestamp for
         the network state change was observed before the subscription was
         established and is not recorded in the YANG datastore, then no
