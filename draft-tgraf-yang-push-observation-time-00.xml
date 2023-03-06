@@ -164,8 +164,6 @@
       "ietf-yang-push:push-update": {
          "id": 1011,
          "observation-time": "2023-02-04T16:30:09.44Z",
-         "module": "ietf-interfaces",
-         "namespace": "urn:ietf:params:xml:ns:yang:ietf-interfaces",
          "revision": "2014-05-08",
          "revision-label": "1.0.0",
          "datastore-xpath-filter": "ietf-interfaces:interfaces",
@@ -365,12 +363,13 @@ module: ietf-yang-push
 
   notifications:
     +---n push-update
-    |  +--ro id?                            sn:subscription-id
-    |  +--ro datastore-contents?            <anydata>
-    |  +--ro incomplete-update?             empty
+    |  +--ro id?                      sn:subscription-id
+    |  +--ro datastore-contents?      <anydata>
+    |  +--ro incomplete-update?       empty
     |  +--ro ypnt:observation-time?   yang:date-and-time
     +---n push-change-update {on-change}?
-       +--ro id?                              sn:subscription-id
+       +--ro id?
+       |       sn:subscription-id
        +--ro datastore-changes
        |  +--ro yang-patch
        |     +--ro patch-id    string
@@ -382,9 +381,9 @@ module: ietf-yang-push
        |        +--ro point?       target-resource-offset
        |        +--ro where?       enumeration
        |        +--ro value?       <anydata>
-       +--ro incomplete-update?               empty
-       +--ro ypnt:state-changed-observation-time?   yang:date-and-time
-
+       +--ro incomplete-update?                     empty
+       +--ro ypnt:state-changed-observation-time?
+               yang:date-and-time
 ]]></artwork>
             </figure></t>
         </section>
@@ -396,7 +395,7 @@ module: ietf-yang-push
 
         <t><figure>
             <artwork><![CDATA[
-<CODE BEGINS> file "ietf-yang-push-netobs-timestamping@2023-02-14.yang"
+<CODE BEGINS> file "ietf-yang-push-netobs-timestamping@2023-03-06.yang"
 module ietf-yang-push-netobs-timestamping {
   yang-version 1.1;
   namespace
@@ -425,8 +424,8 @@ module ietf-yang-push-netobs-timestamping {
                <mailto:alex.huang-feng@insa-lyon.fr>";
 
   description
-    "Defines YANG push event notification with the observation time in 
-    push-update and push-change-update notifications.
+    "Defines YANG push event notification header with the observation
+    time in push-update and push-change-update notifications.
 
     Copyright (c) 2023 IETF Trust and the persons identified as
     authors of the code.  All rights reserved.
@@ -440,7 +439,7 @@ module ietf-yang-push-netobs-timestamping {
     This version of this YANG module is part of RFC XXXX; see the RFC
     itself for full legal notices.";
 
-  revision 2023-02-14 {
+  revision 2023-03-06 {
     description
       "First revision";
     reference
@@ -517,7 +516,7 @@ module ietf-yang-push-netobs-timestamping {
         <dl>
           <dt>URI:</dt>
 
-          <dd>urn:ietf:params:xml:ns:yang:ietf-yang-push-netobs-timestamping:1.0</dd>
+          <dd>urn:ietf:params:xml:ns:yang:ietf-yang-push-netobs-timestamping</dd>
 
           <dt>Registrant Contact:</dt>
 
@@ -541,11 +540,11 @@ module ietf-yang-push-netobs-timestamping {
         <dl>
           <dt>name:</dt>
 
-          <dd>ietf-notification</dd>
+          <dd>ietf-yang-push-netobs-timestamping</dd>
 
           <dt>namespace:</dt>
 
-          <dd>urn:ietf:params:xml:ns:yang:ietf-yang-push-netobs-timestamping:1.0</dd>
+          <dd>urn:ietf:params:xml:ns:yang:ietf-yang-push-netobs-timestamping</dd>
 
           <dt>prefix:</dt>
 
@@ -553,7 +552,7 @@ module ietf-yang-push-netobs-timestamping {
 
           <dt>Reference:</dt>
 
-          <dd>RFC-to-bee</dd>
+          <dd>RFC-to-be</dd>
         </dl>
       </section>
     </section>

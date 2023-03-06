@@ -73,7 +73,7 @@ Table of Contents
    7.  Operational Considerations  . . . . . . . . . . . . . . . . .  11
      7.1.  On Change Sync On Start . . . . . . . . . . . . . . . . .  11
    8.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  11
-   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
+   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
      9.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
      9.2.  Informative References  . . . . . . . . . . . . . . . . .  12
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  13
@@ -178,8 +178,6 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
          "ietf-yang-push:push-update": {
             "id": 1011,
             "observation-time": "2023-02-04T16:30:09.44Z",
-            "module": "ietf-interfaces",
-            "namespace": "urn:ietf:params:xml:ns:yang:ietf-interfaces",
             "revision": "2014-05-08",
             "revision-label": "1.0.0",
             "datastore-xpath-filter": "ietf-interfaces:interfaces",
@@ -221,6 +219,8 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
+
+
 Graf, et al.            Expires 5 September 2023                [Page 4]
 
 Internet-Draft     YANG Notifications Observation Time        March 2023
@@ -232,48 +232,48 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
    push-netobs-timestamping augmentation within the ietf-subscribed-
    notifications, including the RPCs and notifications.
 
-  module: ietf-yang-push
+   module: ietf-yang-push
 
-    augment /sn:establish-subscription/sn:input:
-      +---w (update-trigger)?
-         +--:(periodic)
-         |  +---w periodic!
-         |     +---w period         centiseconds
-         |     +---w anchor-time?   yang:date-and-time
-         +--:(on-change) {on-change}?
-            +---w on-change!
-               +---w dampening-period?   centiseconds
-               +---w sync-on-start?      boolean
-               +---w excluded-change*    change-type
-    augment /sn:establish-subscription/sn:input/sn:target:
-      +--:(datastore)
-         +-- datastore                               identityref
-         +-- (selection-filter)?
-            +--:(by-reference)
-            |  +-- selection-filter-ref
-            |          selection-filter-ref
-            +--:(within-subscription)
-               +-- (filter-spec)?
-                  +--:(datastore-subtree-filter)
-                  |  +-- datastore-subtree-filter?   <anydata>
-                  |          {sn:subtree}?
-                  +--:(datastore-xpath-filter)
-                     +-- datastore-xpath-filter?     yang:xpath1.0
-                             {sn:xpath}?
-    augment /sn:modify-subscription/sn:input:
-      +---w (update-trigger)?
-         +--:(periodic)
-         |  +---w periodic!
-         |     +---w period         centiseconds
-         |     +---w anchor-time?   yang:date-and-time
-         +--:(on-change) {on-change}?
-            +---w on-change!
-               +---w dampening-period?   centiseconds
-    augment /sn:modify-subscription/sn:input/sn:target:
-      +--:(datastore)
-         +-- datastore                               identityref
-         +-- (selection-filter)?
-            +--:(by-reference)
+     augment /sn:establish-subscription/sn:input:
+       +---w (update-trigger)?
+          +--:(periodic)
+          |  +---w periodic!
+          |     +---w period         centiseconds
+          |     +---w anchor-time?   yang:date-and-time
+          +--:(on-change) {on-change}?
+             +---w on-change!
+                +---w dampening-period?   centiseconds
+                +---w sync-on-start?      boolean
+                +---w excluded-change*    change-type
+     augment /sn:establish-subscription/sn:input/sn:target:
+       +--:(datastore)
+          +-- datastore                               identityref
+          +-- (selection-filter)?
+             +--:(by-reference)
+             |  +-- selection-filter-ref
+             |          selection-filter-ref
+             +--:(within-subscription)
+                +-- (filter-spec)?
+                   +--:(datastore-subtree-filter)
+                   |  +-- datastore-subtree-filter?   <anydata>
+                   |          {sn:subtree}?
+                   +--:(datastore-xpath-filter)
+                      +-- datastore-xpath-filter?     yang:xpath1.0
+                              {sn:xpath}?
+     augment /sn:modify-subscription/sn:input:
+       +---w (update-trigger)?
+          +--:(periodic)
+          |  +---w periodic!
+          |     +---w period         centiseconds
+          |     +---w anchor-time?   yang:date-and-time
+          +--:(on-change) {on-change}?
+             +---w on-change!
+                +---w dampening-period?   centiseconds
+     augment /sn:modify-subscription/sn:input/sn:target:
+       +--:(datastore)
+          +-- datastore                               identityref
+          +-- (selection-filter)?
+             +--:(by-reference)
 
 
 
@@ -282,54 +282,54 @@ Graf, et al.            Expires 5 September 2023                [Page 5]
 Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
-            |  +-- selection-filter-ref
-            |          selection-filter-ref
-            +--:(within-subscription)
-               +-- (filter-spec)?
-                  +--:(datastore-subtree-filter)
-                  |  +-- datastore-subtree-filter?   <anydata>
-                  |          {sn:subtree}?
-                  +--:(datastore-xpath-filter)
-                     +-- datastore-xpath-filter?     yang:xpath1.0
-                             {sn:xpath}?
-    augment /sn:subscription-started:
-      +--ro (update-trigger)?
-         +--:(periodic)
-         |  +--ro periodic!
-         |     +--ro period         centiseconds
-         |     +--ro anchor-time?   yang:date-and-time
-         +--:(on-change) {on-change}?
-            +--ro on-change!
-               +--ro dampening-period?   centiseconds
-               +--ro sync-on-start?      boolean
-               +--ro excluded-change*    change-type
-    augment /sn:subscription-started/sn:target:
-      +--:(datastore)
-         +-- datastore                               identityref
-         +-- (selection-filter)?
-            +--:(by-reference)
-            |  +-- selection-filter-ref
-            |          selection-filter-ref
-            +--:(within-subscription)
-               +-- (filter-spec)?
-                  +--:(datastore-subtree-filter)
-                  |  +-- datastore-subtree-filter?   <anydata>
-                  |          {sn:subtree}?
-                  +--:(datastore-xpath-filter)
-                     +-- datastore-xpath-filter?     yang:xpath1.0
-                             {sn:xpath}?
-    augment /sn:subscription-modified:
-      +--ro (update-trigger)?
-         +--:(periodic)
-         |  +--ro periodic!
-         |     +--ro period         centiseconds
-         |     +--ro anchor-time?   yang:date-and-time
-         +--:(on-change) {on-change}?
-            +--ro on-change!
-               +--ro dampening-period?   centiseconds
-               +--ro sync-on-start?      boolean
-               +--ro excluded-change*    change-type
-    augment /sn:subscription-modified/sn:target:
+             |  +-- selection-filter-ref
+             |          selection-filter-ref
+             +--:(within-subscription)
+                +-- (filter-spec)?
+                   +--:(datastore-subtree-filter)
+                   |  +-- datastore-subtree-filter?   <anydata>
+                   |          {sn:subtree}?
+                   +--:(datastore-xpath-filter)
+                      +-- datastore-xpath-filter?     yang:xpath1.0
+                              {sn:xpath}?
+     augment /sn:subscription-started:
+       +--ro (update-trigger)?
+          +--:(periodic)
+          |  +--ro periodic!
+          |     +--ro period         centiseconds
+          |     +--ro anchor-time?   yang:date-and-time
+          +--:(on-change) {on-change}?
+             +--ro on-change!
+                +--ro dampening-period?   centiseconds
+                +--ro sync-on-start?      boolean
+                +--ro excluded-change*    change-type
+     augment /sn:subscription-started/sn:target:
+       +--:(datastore)
+          +-- datastore                               identityref
+          +-- (selection-filter)?
+             +--:(by-reference)
+             |  +-- selection-filter-ref
+             |          selection-filter-ref
+             +--:(within-subscription)
+                +-- (filter-spec)?
+                   +--:(datastore-subtree-filter)
+                   |  +-- datastore-subtree-filter?   <anydata>
+                   |          {sn:subtree}?
+                   +--:(datastore-xpath-filter)
+                      +-- datastore-xpath-filter?     yang:xpath1.0
+                              {sn:xpath}?
+     augment /sn:subscription-modified:
+       +--ro (update-trigger)?
+          +--:(periodic)
+          |  +--ro periodic!
+          |     +--ro period         centiseconds
+          |     +--ro anchor-time?   yang:date-and-time
+          +--:(on-change) {on-change}?
+             +--ro on-change!
+                +--ro dampening-period?   centiseconds
+                +--ro sync-on-start?      boolean
+                +--ro excluded-change*    change-type
+     augment /sn:subscription-modified/sn:target:
 
 
 
@@ -338,54 +338,54 @@ Graf, et al.            Expires 5 September 2023                [Page 6]
 Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
-      +--:(datastore)
-         +-- datastore                               identityref
-         +-- (selection-filter)?
-            +--:(by-reference)
-            |  +-- selection-filter-ref
-            |          selection-filter-ref
-            +--:(within-subscription)
-               +-- (filter-spec)?
-                  +--:(datastore-subtree-filter)
-                  |  +-- datastore-subtree-filter?   <anydata>
-                  |          {sn:subtree}?
-                  +--:(datastore-xpath-filter)
-                     +-- datastore-xpath-filter?     yang:xpath1.0
-                             {sn:xpath}?
-    augment /sn:filters:
-      +--rw selection-filter* [filter-id]
-         +--rw filter-id                         string
-         +--rw (filter-spec)?
-            +--:(datastore-subtree-filter)
-            |  +--rw datastore-subtree-filter?   <anydata>
-            |          {sn:subtree}?
-            +--:(datastore-xpath-filter)
-               +--rw datastore-xpath-filter?     yang:xpath1.0
-                       {sn:xpath}?
-    augment /sn:subscriptions/sn:subscription:
-      +--rw (update-trigger)?
-         +--:(periodic)
-         |  +--rw periodic!
-         |     +--rw period         centiseconds
-         |     +--rw anchor-time?   yang:date-and-time
-         +--:(on-change) {on-change}?
-            +--rw on-change!
-               +--rw dampening-period?   centiseconds
-               +--rw sync-on-start?      boolean
-               +--rw excluded-change*    change-type
-    augment /sn:subscriptions/sn:subscription/sn:target:
-      +--:(datastore)
-         +--rw datastore                               identityref
-         +--rw (selection-filter)?
-            +--:(by-reference)
-            |  +--rw selection-filter-ref
-            |          selection-filter-ref
-            +--:(within-subscription)
-               +--rw (filter-spec)?
-                  +--:(datastore-subtree-filter)
-                  |  +--rw datastore-subtree-filter?   <anydata>
-                  |          {sn:subtree}?
-                  +--:(datastore-xpath-filter)
+       +--:(datastore)
+          +-- datastore                               identityref
+          +-- (selection-filter)?
+             +--:(by-reference)
+             |  +-- selection-filter-ref
+             |          selection-filter-ref
+             +--:(within-subscription)
+                +-- (filter-spec)?
+                   +--:(datastore-subtree-filter)
+                   |  +-- datastore-subtree-filter?   <anydata>
+                   |          {sn:subtree}?
+                   +--:(datastore-xpath-filter)
+                      +-- datastore-xpath-filter?     yang:xpath1.0
+                              {sn:xpath}?
+     augment /sn:filters:
+       +--rw selection-filter* [filter-id]
+          +--rw filter-id                         string
+          +--rw (filter-spec)?
+             +--:(datastore-subtree-filter)
+             |  +--rw datastore-subtree-filter?   <anydata>
+             |          {sn:subtree}?
+             +--:(datastore-xpath-filter)
+                +--rw datastore-xpath-filter?     yang:xpath1.0
+                        {sn:xpath}?
+     augment /sn:subscriptions/sn:subscription:
+       +--rw (update-trigger)?
+          +--:(periodic)
+          |  +--rw periodic!
+          |     +--rw period         centiseconds
+          |     +--rw anchor-time?   yang:date-and-time
+          +--:(on-change) {on-change}?
+             +--rw on-change!
+                +--rw dampening-period?   centiseconds
+                +--rw sync-on-start?      boolean
+                +--rw excluded-change*    change-type
+     augment /sn:subscriptions/sn:subscription/sn:target:
+       +--:(datastore)
+          +--rw datastore                               identityref
+          +--rw (selection-filter)?
+             +--:(by-reference)
+             |  +--rw selection-filter-ref
+             |          selection-filter-ref
+             +--:(within-subscription)
+                +--rw (filter-spec)?
+                   +--:(datastore-subtree-filter)
+                   |  +--rw datastore-subtree-filter?   <anydata>
+                   |          {sn:subtree}?
+                   +--:(datastore-xpath-filter)
 
 
 
@@ -394,35 +394,37 @@ Graf, et al.            Expires 5 September 2023                [Page 7]
 Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
-                     +--rw datastore-xpath-filter?
-                             yang:xpath1.0 {sn:xpath}?
+                      +--rw datastore-xpath-filter?
+                              yang:xpath1.0 {sn:xpath}?
 
-    rpcs:
-      +---x resync-subscription {on-change}?
-         +---w input
-            +---w id    sn:subscription-id
+     rpcs:
+       +---x resync-subscription {on-change}?
+          +---w input
+             +---w id    sn:subscription-id
 
-    notifications:
-      +---n push-update
-      |  +--ro id?                            sn:subscription-id
-      |  +--ro datastore-contents?            <anydata>
-      |  +--ro incomplete-update?             empty
-      |  +--ro ypnt:observation-time?   yang:date-and-time
-      +---n push-change-update {on-change}?
-         +--ro id?                              sn:subscription-id
-         +--ro datastore-changes
-         |  +--ro yang-patch
-         |     +--ro patch-id    string
-         |     +--ro comment?    string
-         |     +--ro edit* [edit-id]
-         |        +--ro edit-id      string
-         |        +--ro operation    enumeration
-         |        +--ro target       target-resource-offset
-         |        +--ro point?       target-resource-offset
-         |        +--ro where?       enumeration
-         |        +--ro value?       <anydata>
-         +--ro incomplete-update?               empty
-         +--ro ypnt:state-changed-observation-time?   yang:date-and-time
+     notifications:
+       +---n push-update
+       |  +--ro id?                      sn:subscription-id
+       |  +--ro datastore-contents?      <anydata>
+       |  +--ro incomplete-update?       empty
+       |  +--ro ypnt:observation-time?   yang:date-and-time
+       +---n push-change-update {on-change}?
+          +--ro id?
+          |       sn:subscription-id
+          +--ro datastore-changes
+          |  +--ro yang-patch
+          |     +--ro patch-id    string
+          |     +--ro comment?    string
+          |     +--ro edit* [edit-id]
+          |        +--ro edit-id      string
+          |        +--ro operation    enumeration
+          |        +--ro target       target-resource-offset
+          |        +--ro point?       target-resource-offset
+          |        +--ro where?       enumeration
+          |        +--ro value?       <anydata>
+          +--ro incomplete-update?                     empty
+          +--ro ypnt:state-changed-observation-time?
+                  yang:date-and-time
 
 4.2.  YANG Module
 
@@ -430,7 +432,7 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
    YANG Notifications [RFC8639].
 
    <CODE BEGINS>
-     file "ietf-yang-push-netobs-timestamping@2023-02-14.yang"
+     file "ietf-yang-push-netobs-timestamping@2023-03-06.yang"
    module ietf-yang-push-netobs-timestamping {
      yang-version 1.1;
      namespace
@@ -440,8 +442,6 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
        prefix yang;
        reference
          "RFC 6991: Common YANG Data Types";
-     }
-     import ietf-yang-push {
 
 
 
@@ -450,6 +450,8 @@ Graf, et al.            Expires 5 September 2023                [Page 8]
 Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
+     }
+     import ietf-yang-push {
        prefix yp;
        reference
          "RFC 8641: Subscription to YANG Notifications for Datastore Updates";
@@ -467,8 +469,8 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
                   <mailto:alex.huang-feng@insa-lyon.fr>";
 
      description
-       "Defines YANG push event notification with the observation time in
-       push-update and push-change-update notifications.
+       "Defines YANG push event notification header with the observation
+       time in push-update and push-change-update notifications.
 
        Copyright (c) 2023 IETF Trust and the persons identified as
        authors of the code.  All rights reserved.
@@ -482,7 +484,7 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
        This version of this YANG module is part of RFC XXXX; see the RFC
        itself for full legal notices.";
 
-     revision 2023-02-14 {
+     revision 2023-03-06 {
        description
          "First revision";
        reference
@@ -496,8 +498,6 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
      }
 
      feature yang-push-update-obs-timestamp {
-       description
-         "This feature indicates the YANG-push Notifications support
 
 
 
@@ -506,6 +506,8 @@ Graf, et al.            Expires 5 September 2023                [Page 9]
 Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
+       description
+         "This feature indicates the YANG-push Notifications support
          the observation timestamps in the push-update notifications.";
      }
 
@@ -555,8 +557,6 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
-
-
 Graf, et al.            Expires 5 September 2023               [Page 10]
 
 Internet-Draft     YANG Notifications Observation Time        March 2023
@@ -572,8 +572,7 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
    IANA is requested to add this document as a reference in the
    following URI in the IETF XML Registry [RFC3688].
 
-   URI:  urn:ietf:params:xml:ns:yang:ietf-yang-push-netobs-
-      timestamping:1.0
+   URI:  urn:ietf:params:xml:ns:yang:ietf-yang-push-netobs-timestamping
 
    Registrant Contact:  The IESG.
 
@@ -586,14 +585,14 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
    This document registers the following YANG module in the YANG Module
    Names Registry [RFC6020], within the "YANG Parameters" registry:
 
-   name:  ietf-notification
+   name:  ietf-yang-push-netobs-timestamping
 
    namespace:  urn:ietf:params:xml:ns:yang:ietf-yang-push-netobs-
-      timestamping:1.0
+      timestamping
 
    prefix:  ypnt
 
-   Reference:  RFC-to-bee
+   Reference:  RFC-to-be
 
 7.  Operational Considerations
 
@@ -610,6 +609,7 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
    Francois Ahmed Elhassany and Jean Quilbeuf for their review and
    valuable comments.
 
+9.  References
 
 
 
@@ -617,8 +617,6 @@ Graf, et al.            Expires 5 September 2023               [Page 11]
 
 Internet-Draft     YANG Notifications Observation Time        March 2023
 
-
-9.  References
 
 9.1.  Normative References
 
@@ -664,6 +662,8 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
               ietf-netconf-udp-notif-08, 12 September 2022,
               <https://datatracker.ietf.org/doc/html/draft-ietf-netconf-
               udp-notif-08>.
+
+
 
 
 
