@@ -5,14 +5,14 @@
 Network Working Group                                            T. Graf
 Internet-Draft                                                  Swisscom
 Intended status: Standards Track                               B. Claise
-Expires: 7 September 2023                                         Huawei
+Expires: 7 January 2024                                           Huawei
                                                            A. Huang Feng
                                                                INSA-Lyon
-                                                            6 March 2023
+                                                             6 July 2023
 
 
    Support of Network Observation Timestamping in YANG Notifications
-               draft-tgraf-yang-push-observation-time-01
+           draft-netconf-tgraf-yang-push-observation-time-00
 
 Abstract
 
@@ -35,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 September 2023.
+   This Internet-Draft will expire on 7 January 2024.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Graf, et al.            Expires 7 September 2023                [Page 1]
+Graf, et al.             Expires 7 January 2024                 [Page 1]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
 Table of Contents
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Graf, et al.            Expires 7 September 2023                [Page 2]
+Graf, et al.             Expires 7 January 2024                 [Page 2]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
    Publisher
@@ -165,9 +165,9 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
-Graf, et al.            Expires 7 September 2023                [Page 3]
+Graf, et al.             Expires 7 January 2024                 [Page 3]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
    {
@@ -178,8 +178,6 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
          "ietf-yang-push:push-update": {
             "id": 1011,
             "observation-time": "2023-02-04T16:30:09.44Z",
-            "revision": "2014-05-08",
-            "revision-label": "1.0.0",
             "datastore-xpath-filter": "ietf-interfaces:interfaces",
             "datastore-contents": {
                "ietf-interfaces:interface": {
@@ -221,9 +219,11 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
-Graf, et al.            Expires 7 September 2023                [Page 4]
+
+
+Graf, et al.             Expires 7 January 2024                 [Page 4]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
 4.1.2.  Full Tree View
@@ -277,9 +277,9 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
-Graf, et al.            Expires 7 September 2023                [Page 5]
+Graf, et al.             Expires 7 January 2024                 [Page 5]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
              |  +-- selection-filter-ref
@@ -333,9 +333,9 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
-Graf, et al.            Expires 7 September 2023                [Page 6]
+Graf, et al.             Expires 7 January 2024                 [Page 6]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
        +--:(datastore)
@@ -389,9 +389,9 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
-Graf, et al.            Expires 7 September 2023                [Page 7]
+Graf, et al.             Expires 7 January 2024                 [Page 7]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
                       +--rw datastore-xpath-filter?
@@ -445,9 +445,9 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
-Graf, et al.            Expires 7 September 2023                [Page 8]
+Graf, et al.             Expires 7 January 2024                 [Page 8]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
      }
@@ -501,9 +501,9 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
-Graf, et al.            Expires 7 September 2023                [Page 9]
+Graf, et al.             Expires 7 January 2024                 [Page 9]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
        description
@@ -557,9 +557,9 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
-Graf, et al.            Expires 7 September 2023               [Page 10]
+Graf, et al.             Expires 7 January 2024                [Page 10]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
 6.  IANA Considerations
@@ -613,9 +613,9 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
-Graf, et al.            Expires 7 September 2023               [Page 11]
+Graf, et al.             Expires 7 January 2024                [Page 11]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
 9.1.  Normative References
@@ -659,9 +659,9 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
               Zheng, G., Zhou, T., Graf, T., Francois, P., Feng, A. H.,
               and P. Lucente, "UDP-based Transport for Configured
               Subscriptions", Work in Progress, Internet-Draft, draft-
-              ietf-netconf-udp-notif-08, 12 September 2022,
+              ietf-netconf-udp-notif-09, 10 March 2023,
               <https://datatracker.ietf.org/doc/html/draft-ietf-netconf-
-              udp-notif-08>.
+              udp-notif-09>.
 
 
 
@@ -669,9 +669,9 @@ Internet-Draft     YANG Notifications Observation Time        March 2023
 
 
 
-Graf, et al.            Expires 7 September 2023               [Page 12]
+Graf, et al.             Expires 7 January 2024                [Page 12]
 
-Internet-Draft     YANG Notifications Observation Time        March 2023
+Internet-Draft     YANG Notifications Observation Time         July 2023
 
 
    [RFC8259]  Bray, T., Ed., "The JavaScript Object Notation (JSON) Data
@@ -725,4 +725,4 @@ Authors' Addresses
 
 
 
-Graf, et al.            Expires 7 September 2023               [Page 13]
+Graf, et al.             Expires 7 January 2024                [Page 13]

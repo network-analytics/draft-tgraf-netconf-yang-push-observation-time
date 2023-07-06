@@ -10,7 +10,8 @@
 <?rfc inline="yes"?>
 <?rfc compact="yes"?>
 <?rfc subcompact="no"?>
-<rfc category="std" docName="draft-tgraf-yang-push-observation-time-01"
+<rfc category="std"
+     docName="draft-netconf-tgraf-yang-push-observation-time-00"
      ipr="trust200902">
   <front>
     <title abbrev="YANG Notifications Observation Time">Support of Network
@@ -68,7 +69,7 @@
       </address>
     </author>
 
-    <date day="6" month="March" year="2023"/>
+    <date day="6" month="July" year="2023"/>
 
     <abstract>
       <t>This document extends the YANG Notification header with the YANG
@@ -164,8 +165,6 @@
       "ietf-yang-push:push-update": {
          "id": 1011,
          "observation-time": "2023-02-04T16:30:09.44Z",
-         "revision": "2014-05-08",
-         "revision-label": "1.0.0",
          "datastore-xpath-filter": "ietf-interfaces:interfaces",
          "datastore-contents": {
             "ietf-interfaces:interface": {
