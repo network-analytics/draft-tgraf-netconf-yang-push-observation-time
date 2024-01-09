@@ -69,7 +69,7 @@
       </address>
     </author>
 
-    <date day="6" month="January" year="2024"/>
+    <date day="09" month="January" year="2024"/>
 
     <abstract>
       <t>This document extends the YANG Notification header with the YANG
@@ -99,7 +99,7 @@
       <t>When the time bucket length in a time series database and the
       periodical YANG push subscription time is identical, the eventTime of
       the netconf notification message header is used for indexing, there is
-      variable delay between the observation time and the export time, and the
+      variable delay between the observation time and the eventTime, and the
       anchor-time as described in Section 4.2 of <xref target="RFC8641"/> is
       close to the time bucket boundaries, a time bucket is going to have
       periodically 0 or 2 measurements indexed instead of 1. Leading to
