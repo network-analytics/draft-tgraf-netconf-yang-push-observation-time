@@ -108,8 +108,11 @@
       time series database indexing.</t>
 
       <t>By extending the YANG-Push Notification header with the YANG objects
-      observation-time and timestamp-type for streaming update notifications
-      these use cases can be addressed accordingly.</t>
+      observation-time and moment-in-time for streaming update notifications
+      it is ensured that the "observation-time" timestamp is always present
+      with the best available time, can be therefore used unconditionally in
+      the data processing chain and with moment-in-time there is semantic
+      describing the when it was observed in time.</t>
     </section>
 
     <section title="Terminologies">
@@ -128,7 +131,7 @@
       "push-update" notification in a "periodical" subscription and the time
       when the network state change was observed.</t>
 
-      <t>Timestamp-type: Describes at which point in time the metrics where
+      <t>Moment-in-time: Describes at which point in time the metrics where
       observed. Could be at the beginning or the end of the periodical
       subscription intervall or when the state change occured or was last
       observed with a on-change with or without sync on start option.</t>
@@ -153,7 +156,7 @@
         case of an "on-change" subscription it describes the time when the
         network state change was observed.</dd>
 
-        <dt>timestamp-type:</dt>
+        <dt>moment-in-time:</dt>
 
         <dd>Describes at which point in time the observation-time was
         observed. For "periodical" subscription this is either at the "start"
@@ -180,7 +183,7 @@
       "ietf-yang-push:push-update": {
          "id": 1011,
          "observation-time": "2023-02-04T16:30:09.44Z",
-         "timestamp-type": 0,
+         "moment-in-time": 0,
          "datastore-xpath-filter": "ietf-interfaces:interfaces",
          "datastore-contents": {
             "ietf-interfaces:interface": {
@@ -201,7 +204,7 @@
     <section anchor="YANG-push-netobs-timestamping-module"
              title="The &quot;ietf-yang-push-netobs-timestamping&quot; YANG Module">
       <t>This YANG module augments the "ietf-yang-push" module with the
-      observation-time and timestamp-type in the "push-update" and
+      observation-time and moment-in-time in the "push-update" and
       "push-change-update" streaming update notifications.</t>
 
       <section anchor="YANG-netobs-timestamping-model"
@@ -216,10 +219,10 @@ module: ietf-yang-push-observation-timestamp-01
 
   augment /yp:push-update:
     +--ro observation-time?   yang:date-and-time
-    +--ro timestamp-type?     bits
+    +--ro moment-in-time?     bits
   augment /yp:push-change-update:
     +--ro observation-time?   yang:date-and-time
-    +--ro timestamp-type?     bits
+    +--ro moment-in-time?     bits
 ]]></artwork>
             </figure></t>
         </section>
@@ -367,7 +370,7 @@ module: ietf-yang-push
     |  +--ro datastore-contents?      <anydata>
     |  +--ro incomplete-update?       empty
     |  +--ro ypot:observation-time?   yang:date-and-time
-    |  +--ro ypot:timestamp-type?     bits
+    |  +--ro ypot:moment-in-time?     bits
     +---n push-change-update {on-change}?
        +--ro id?                      sn:subscription-id
        +--ro datastore-changes
@@ -383,7 +386,7 @@ module: ietf-yang-push
        |        +--ro value?       <anydata>
        +--ro incomplete-update?       empty
        +--ro ypot:observation-time?   yang:date-and-time
-       +--ro ypot:timestamp-type?     bits
+       +--ro ypot:moment-in-time?     bits
 ]]></artwork>
             </figure></t>
         </section>
@@ -460,7 +463,7 @@ module ietf-yang-push-observation-timestamp-01 {
       description
         "This is the time when metrics where observed";
     }
-    leaf timestamp-type {
+    leaf moment-in-time {
     description
       "This describes at which point in time the metrics where observed";
       type bits {
@@ -569,7 +572,7 @@ module ietf-yang-push-observation-timestamp-01 {
         the network state change was observed before the subscription was
         established and is not recorded in the YANG datastore, then the
         observation-time should record the last known time and the
-        timestamp-type should be set to "end".</t>
+        moment-in-time should be set to "end".</t>
       </section>
     </section>
 

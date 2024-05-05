@@ -62,7 +62,7 @@ module ietf-yang-push-observation-timestamp-01 {
       description
         "This is the time when metrics where observed";
     }
-    leaf timestamp-type {
+    leaf moment-in-time {
     description
       "This describes at which point in time the metrics where observed";
       type bits {
