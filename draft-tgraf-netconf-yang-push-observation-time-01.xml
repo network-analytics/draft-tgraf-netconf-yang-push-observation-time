@@ -14,8 +14,8 @@
      docName="draft-tgraf-netconf-yang-push-observation-time-01"
      ipr="trust200902">
   <front>
-    <title abbrev="YANG Notifications Observation Time">Support of Network
-    Observation Timestamping in YANG Notifications</title>
+    <title abbrev="YANG Notifications Observation Time">Support of Observation
+    Timestamp in YANG-Push Notifications</title>
 
     <author fullname="Thomas Graf" initials="T" surname="Graf">
       <organization>Swisscom</organization>
@@ -69,12 +69,12 @@
       </address>
     </author>
 
-    <date day="14" month="April" year="2024"/>
+    <date day="05" month="May" year="2024"/>
 
     <abstract>
-      <t>This document extends the YANG Notification header with the YANG
-      objects observation timestamping, both for the "push-update" and
-      "push-change-update" notifications.</t>
+      <t>This document extends the YANG-Push Notification header with the YANG
+      objects observation timestamp and timestamp type for streaming update
+      notifications.</t>
     </abstract>
   </front>
 
@@ -107,10 +107,9 @@
       is resolved by using the observation-time instead of the eventTime for
       time series database indexing.</t>
 
-      <t>By extending the YANG Notification header with the YANG objects
-      observation-time for periodical and state-changed-observation-time for
-      on-change subscriptions these use cases can be addressed
-      accordingly.</t>
+      <t>By extending the YANG-Push Notification header with the YANG objects
+      observation-time and timestamp-type for streaming update notifications
+      these use cases can be addressed accordingly.</t>
     </section>
 
     <section title="Terminologies">
@@ -126,10 +125,13 @@
       <t>In addition, this document defines the following terms:</t>
 
       <t>Observation-time: Describes the measurement observation time for the
-      "push-update" notification in a "periodical" subscription.</t>
+      "push-update" notification in a "periodical" subscription and the time
+      when the network state change was observed.</t>
 
-      <t>State-changed-observation-time: Describes the time when the network
-      state change was observed.</t>
+      <t>Timestamp-type: Describes at which point in time the metrics where
+      observed. Could be at the beginning or the end of the periodical
+      subscription intervall or when the state change occured or was last
+      observed with a on-change with or without sync on start option.</t>
     </section>
 
     <section anchor="Streaming-Update"
@@ -143,19 +145,21 @@
         <dt>observation-time:</dt>
 
         <dd>Describes the measurement observation time for the "push-update"
-        notification in a "periodical" subscription. By comparing the
-        "observation-time" of two "push-update" notifications, the collector
-        can deduce the actual cadence of the measurements, and compare it with
-        the configured one.</dd>
+        notification in a "periodical" and for the "push-change-update"
+        notification in a "on-change" subscription. By comparing the
+        "observation-time" of two "push-update" notifications in a periodical
+        subscription, the collector can deduce the actual cadence of the
+        measurements, and compare it with the subscription configuration. In
+        case of an "on-change" subscription it describes the time when the
+        network state change was observed.</dd>
 
-        <dt>state-changed-observation-time:</dt>
+        <dt>timestamp-type:</dt>
 
-        <dd>Describes in the "push-change-update" notification in a
-        "on-change" subscription the time when the network state change was
-        observed after the subscription was initially established. In case of
-        an "on-change sync on start" subscription it describes the time when
-        the network state change was observed before the subscription was
-        established.</dd>
+        <dd>Describes at which point in time the observation-time was
+        observed. For "periodical" subscription this is either at the "start"
+        or the "end" of the accounting period. For an "on-change" subscription
+        it is with "start" the time when the network state change occured and
+        was observed.</dd>
       </dl>
 
       <t><xref target="subscription_modified_example_json_fig"/> provides an
@@ -176,6 +180,7 @@
       "ietf-yang-push:push-update": {
          "id": 1011,
          "observation-time": "2023-02-04T16:30:09.44Z",
+         "timestamp-type": 0,
          "datastore-xpath-filter": "ietf-interfaces:interfaces",
          "datastore-contents": {
             "ietf-interfaces:interface": {
@@ -196,30 +201,32 @@
     <section anchor="YANG-push-netobs-timestamping-module"
              title="The &quot;ietf-yang-push-netobs-timestamping&quot; YANG Module">
       <t>This YANG module augments the "ietf-yang-push" module with the
-      observation-time in the "push-update" and "push-change-update" streaming
-      update notifications.</t>
+      observation-time and timestamp-type in the "push-update" and
+      "push-change-update" streaming update notifications.</t>
 
       <section anchor="YANG-netobs-timestamping-model"
                title="Data Model Overview">
         <section anchor="Tree View" title="Tree View">
           <t>The following is the YANG tree diagram <xref target="RFC8340"/>
-          for the ietf-yang-push-netobs-timestamping YANG module</t>
+          for the ietf-yang-push-observation-timestamp YANG module</t>
 
           <t><figure>
               <artwork><![CDATA[
-module: ietf-yang-push-netobs-timestamping
+module: ietf-yang-push-observation-timestamp-01
 
   augment /yp:push-update:
     +--ro observation-time?   yang:date-and-time
+    +--ro timestamp-type?     bits
   augment /yp:push-change-update:
-    +--ro state-changed-observation-time?   yang:date-and-time
+    +--ro observation-time?   yang:date-and-time
+    +--ro timestamp-type?     bits
 ]]></artwork>
             </figure></t>
         </section>
 
         <section anchor="Full Tree View" title="Full Tree View">
           <t>The following is the YANG tree diagram <xref target="RFC8340"/>
-          for the ietf-yang-push-netobs-timestamping augmentation within the
+          for the ietf-yang-push-observation-timestamp augmentation within the
           ietf-subscribed-notifications, including the RPCs and
           notifications.</t>
 
@@ -243,16 +250,13 @@ module: ietf-yang-push
        +-- datastore                               identityref
        +-- (selection-filter)?
           +--:(by-reference)
-          |  +-- selection-filter-ref
-          |          selection-filter-ref
+          |  +-- selection-filter-ref              selection-filter-ref
           +--:(within-subscription)
              +-- (filter-spec)?
                 +--:(datastore-subtree-filter)
-                |  +-- datastore-subtree-filter?   <anydata>
-                |          {sn:subtree}?
+                |  +-- datastore-subtree-filter?   <anydata> {sn:subtree}?
                 +--:(datastore-xpath-filter)
-                   +-- datastore-xpath-filter?     yang:xpath1.0
-                           {sn:xpath}?
+                   +-- datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
   augment /sn:modify-subscription/sn:input:
     +---w (update-trigger)?
        +--:(periodic)
@@ -267,16 +271,13 @@ module: ietf-yang-push
        +-- datastore                               identityref
        +-- (selection-filter)?
           +--:(by-reference)
-          |  +-- selection-filter-ref
-          |          selection-filter-ref
+          |  +-- selection-filter-ref              selection-filter-ref
           +--:(within-subscription)
              +-- (filter-spec)?
                 +--:(datastore-subtree-filter)
-                |  +-- datastore-subtree-filter?   <anydata>
-                |          {sn:subtree}?
+                |  +-- datastore-subtree-filter?   <anydata> {sn:subtree}?
                 +--:(datastore-xpath-filter)
-                   +-- datastore-xpath-filter?     yang:xpath1.0
-                           {sn:xpath}?
+                   +-- datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
   augment /sn:subscription-started:
     +--ro (update-trigger)?
        +--:(periodic)
@@ -293,16 +294,13 @@ module: ietf-yang-push
        +-- datastore                               identityref
        +-- (selection-filter)?
           +--:(by-reference)
-          |  +-- selection-filter-ref
-          |          selection-filter-ref
+          |  +-- selection-filter-ref              selection-filter-ref
           +--:(within-subscription)
              +-- (filter-spec)?
                 +--:(datastore-subtree-filter)
-                |  +-- datastore-subtree-filter?   <anydata>
-                |          {sn:subtree}?
+                |  +-- datastore-subtree-filter?   <anydata> {sn:subtree}?
                 +--:(datastore-xpath-filter)
-                   +-- datastore-xpath-filter?     yang:xpath1.0
-                           {sn:xpath}?
+                   +-- datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
   augment /sn:subscription-modified:
     +--ro (update-trigger)?
        +--:(periodic)
@@ -319,26 +317,21 @@ module: ietf-yang-push
        +-- datastore                               identityref
        +-- (selection-filter)?
           +--:(by-reference)
-          |  +-- selection-filter-ref
-          |          selection-filter-ref
+          |  +-- selection-filter-ref              selection-filter-ref
           +--:(within-subscription)
              +-- (filter-spec)?
                 +--:(datastore-subtree-filter)
-                |  +-- datastore-subtree-filter?   <anydata>
-                |          {sn:subtree}?
+                |  +-- datastore-subtree-filter?   <anydata> {sn:subtree}?
                 +--:(datastore-xpath-filter)
-                   +-- datastore-xpath-filter?     yang:xpath1.0
-                           {sn:xpath}?
+                   +-- datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
   augment /sn:filters:
     +--rw selection-filter* [filter-id]
        +--rw filter-id                         string
        +--rw (filter-spec)?
           +--:(datastore-subtree-filter)
-          |  +--rw datastore-subtree-filter?   <anydata>
-          |          {sn:subtree}?
+          |  +--rw datastore-subtree-filter?   <anydata> {sn:subtree}?
           +--:(datastore-xpath-filter)
-             +--rw datastore-xpath-filter?     yang:xpath1.0
-                     {sn:xpath}?
+             +--rw datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
   augment /sn:subscriptions/sn:subscription:
     +--rw (update-trigger)?
        +--:(periodic)
@@ -355,16 +348,13 @@ module: ietf-yang-push
        +--rw datastore                               identityref
        +--rw (selection-filter)?
           +--:(by-reference)
-          |  +--rw selection-filter-ref
-          |          selection-filter-ref
+          |  +--rw selection-filter-ref              selection-filter-ref
           +--:(within-subscription)
              +--rw (filter-spec)?
                 +--:(datastore-subtree-filter)
-                |  +--rw datastore-subtree-filter?   <anydata>
-                |          {sn:subtree}?
+                |  +--rw datastore-subtree-filter?   <anydata> {sn:subtree}?
                 +--:(datastore-xpath-filter)
-                   +--rw datastore-xpath-filter?
-                           yang:xpath1.0 {sn:xpath}?
+                   +--rw datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
 
   rpcs:
     +---x resync-subscription {on-change}?
@@ -376,10 +366,10 @@ module: ietf-yang-push
     |  +--ro id?                      sn:subscription-id
     |  +--ro datastore-contents?      <anydata>
     |  +--ro incomplete-update?       empty
-    |  +--ro ypnt:observation-time?   yang:date-and-time
+    |  +--ro ypot:observation-time?   yang:date-and-time
+    |  +--ro ypot:timestamp-type?     bits
     +---n push-change-update {on-change}?
-       +--ro id?
-       |       sn:subscription-id
+       +--ro id?                      sn:subscription-id
        +--ro datastore-changes
        |  +--ro yang-patch
        |     +--ro patch-id    string
@@ -391,9 +381,9 @@ module: ietf-yang-push
        |        +--ro point?       target-resource-offset
        |        +--ro where?       enumeration
        |        +--ro value?       <anydata>
-       +--ro incomplete-update?                     empty
-       +--ro ypnt:state-changed-observation-time?
-               yang:date-and-time
+       +--ro incomplete-update?       empty
+       +--ro ypot:observation-time?   yang:date-and-time
+       +--ro ypot:timestamp-type?     bits
 ]]></artwork>
             </figure></t>
         </section>
@@ -405,12 +395,12 @@ module: ietf-yang-push
 
         <t><figure>
             <artwork><![CDATA[
-<CODE BEGINS> file "ietf-yang-push-netobs-timestamping@2023-03-06.yang"
-module ietf-yang-push-netobs-timestamping {
+<CODE BEGINS> file "ietf-yang-push-observation-timestamping@2024-05-05.yang"
+module ietf-yang-push-observation-timestamp-01 {
   yang-version 1.1;
   namespace
-    "urn:ietf:params:xml:ns:yang:ietf-yang-push-netobs-timestamping";
-  prefix ypnt;
+    "urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-timestamp";
+  prefix ypot;
   import ietf-yang-types {
     prefix yang;
     reference
@@ -434,8 +424,8 @@ module ietf-yang-push-netobs-timestamping {
                <mailto:alex.huang-feng@insa-lyon.fr>";
 
   description
-    "Defines YANG push event notification header with the observation
-    time in push-update and push-change-update notifications.
+    "Defines YANG-Push event notification header with the observation
+    time in streaming update notifications.
 
     Copyright (c) 2023 IETF Trust and the persons identified as
     authors of the code.  All rights reserved.
@@ -449,59 +439,54 @@ module ietf-yang-push-netobs-timestamping {
     This version of this YANG module is part of RFC XXXX; see the RFC
     itself for full legal notices.";
 
-  revision 2023-03-06 {
+  revision 2024-05-05 {
     description
       "First revision";
     reference
-      "RFC XXXX: Support of YANG Notifications Observation Time";
+      "RFC XXXX: Support of YANG-Push Notifications Observation Time";
   }
 
-  feature yang-push-change-update-obs-timestamp {
+  feature yang-push-observation-timestamp {
     description
       "This feature indicates the YANG-push Notifications support
-      the observation timestamps in the push-change-update notifications.";
+      the observation timestamps in streaming update notifications.";
   }
 
-  feature yang-push-update-obs-timestamp {
+  grouping yang-push-observation-timestamp {
     description
-      "This feature indicates the YANG-push Notifications support
-      the observation timestamps in the push-update notifications.";
-  }
-
-  grouping yang-push-update-obs-timestamp {
-    description
-      "This grouping adds the start timestamp and the end timestamp of the
-      observed metrics.";
+      "This grouping adds the observation timestamp for the observed metrics";
     leaf observation-time {
       type yang:date-and-time;
       description
-        "This is the time when metrics started counting.";
+        "This is the time when metrics where observed";
     }
-  }
-
-  grouping yang-push-change-update-obs-timestamp {
+    leaf timestamp-type {
     description
-      "This grouping adds the timestamp of the recorded event.";
-    leaf state-changed-observation-time {
-      type yang:date-and-time;
-      description
-        "This is the time when event happened.";
+      "This describes at which point in time the metrics where observed";
+      type bits {
+        bit start {
+     position 0;
+        }
+        bit end {
+     position 1;
+        }
+      }
     }
   }
 
   // Event notifications
   augment "/yp:push-update" {
     description
-      "This augmentation adds the start timestamp of the counted metrics
+      "This augmentation adds the observation timestamp of the accounted metrics
       in the push-update notification.";
-    uses ypnt:yang-push-update-obs-timestamp;
+    uses ypot:yang-push-observation-timestamp;
   }
 
   augment "/yp:push-change-update" {
     description
-      "This augmentation adds the timestamp of the event in the push-change-update
-      notification.";
-      uses ypnt:yang-push-change-update-obs-timestamp;
+      "This augmentation adds the observation timestamp of the event 
+      in the push-change-update notification.";
+      uses ypot:yang-push-observation-timestamp;
   }
 }
 <CODE ENDS>]]></artwork>
@@ -561,15 +546,15 @@ module ietf-yang-push-netobs-timestamping {
         <dl>
           <dt>name:</dt>
 
-          <dd>ietf-yang-push-netobs-timestamping</dd>
+          <dd>ietf-yang-push-observation-timestamp</dd>
 
           <dt>namespace:</dt>
 
-          <dd>urn:ietf:params:xml:ns:yang:ietf-yang-push-netobs-timestamping</dd>
+          <dd>urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-timestamp</dd>
 
           <dt>prefix:</dt>
 
-          <dd>ypnt</dd>
+          <dd>ypot</dd>
 
           <dt>Reference:</dt>
 
@@ -582,8 +567,9 @@ module ietf-yang-push-netobs-timestamping {
       <section anchor="on_chang_sync_on_start" title="On Change Sync On Start">
         <t>For "on-change sync on start" subscriptions, if the timestamp for
         the network state change was observed before the subscription was
-        established and is not recorded in the YANG datastore, then no
-        timestamp should be populated to state-changed-observation-time.</t>
+        established and is not recorded in the YANG datastore, then the
+        observation-time should record the last known time and the
+        timestamp-type should be set to "end".</t>
       </section>
     </section>
 
