@@ -81,7 +81,7 @@ Table of Contents
 1.  Introduction
 
    To correlate network data among different Network Telemetry planes as
-   described in Section 3.1 of [RFC9232] or among different YANG push
+   described in Section 3.1 of [RFC9232] or among different YANG-Push
    subscription types defined in Section 3.1 of [RFC8641], network
    observation timestamping describes when the state change was observed
    or from when to when the data was accounted.  This is essential for
@@ -206,7 +206,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
   |                |                  |                |
   v                v                  v                v
 
-                       Figure 1: Exampe timeline
+                       Figure 1: Example timeline
 
    Figure 2 provides an example of a JSON encoded, [RFC8259], "push-
    change-update" notification message over HTTPS-based

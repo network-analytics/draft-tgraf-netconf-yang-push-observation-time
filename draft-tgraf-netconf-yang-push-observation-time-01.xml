@@ -82,7 +82,7 @@
     <section anchor="Introduction" title="Introduction">
       <t>To correlate network data among different Network Telemetry planes as
       described in Section 3.1 of <xref target="RFC9232"/> or among different
-      YANG push subscription types defined in Section 3.1 of <xref
+      YANG-Push subscription types defined in Section 3.1 of <xref
       target="RFC8641"/>, network observation timestamping describes when the
       state change was observed or from when to when the data was accounted.
       This is essential for understanding the timely relationship among these
@@ -183,7 +183,7 @@
       "observation-timestamp" of "T4" with "point-in-time" is set to
       "accounting-end".</t>
 
-      <figure anchor="timeline_examplen_fig" title="Exampe timeline">
+      <figure anchor="timeline_examplen_fig" title="Example timeline">
         <artwork><![CDATA[
 Timeline
 ---------------------------------------------------------------------->
