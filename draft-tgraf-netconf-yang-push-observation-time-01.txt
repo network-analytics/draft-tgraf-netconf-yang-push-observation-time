@@ -159,7 +159,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
       subscription it describes the time when the network state change
       was observed.
 
-   point-in-time:  Describes at which point in time the observation-time
+   point-in-time:  Describes at which point in time the value of
 
 
 
@@ -170,14 +170,15 @@ Graf, et al.             Expires 4 December 2024                [Page 3]
 Internet-Draft     YANG Notifications Observation Time         June 2024
 
 
-      was observed.  For "periodical" subscription this is either
-      "accounting-start" or "accounting-end" describing the start or end
-      of the accounting.  For "on-change" subsriptions with or without
-      sync on start option it is "state-changed" when the state change
-      was observed in real-time.  For "on-change" subsriptions with sync
-      on start option it is "current-state" when it was observed after
-      the YANG-Push subscription was established and the time since the
-      state changed to current state is unkown.
+      observation-time was observed.  For "periodical" subscription the
+      value of point-in-time can be either (1) "accounting-start" or (2)
+      "accounting-end" describing the start or end of the accounting.
+      For "on-change" subsriptions, the value of point-in-time can be
+      either (3) "state-changed", when the state change was observed in
+      real-time with or without sync on start option or (4) "current-
+      state", when it was observed after the YANG-Push subscription was
+      established and the time since the state changed to current state
+      is unkown.
 
    Figure 1 provides an example timeline of events to describe "point-
    in-time".  At "T2", if the network node was capable to store the
@@ -212,7 +213,6 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
    [I-D.ietf-netconf-https-notif] or UDP-based
    [I-D.ietf-netconf-udp-notif] transport with
    [I-D.tgraf-netconf-notif-sequencing] as extension.
-
 
 
 
@@ -264,7 +264,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
    The following is the YANG tree diagram [RFC8340] for the ietf-yang-
    push-observation-timestamp YANG module
 
-   module: ietf-yang-push-observation-timestamp-01
+   module: ietf-yang-push-observation-timestamp
 
      augment /yp:push-update:
        +--ro observation-time?   yang:date-and-time
@@ -472,7 +472,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
    <CODE BEGINS>
      file "ietf-yang-push-observation-timestamping@2024-06-02.yang"
-   module ietf-yang-push-observation-timestamp-01 {
+   module ietf-yang-push-observation-timestamp {
      yang-version 1.1;
      namespace
        "urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-timestamp";
@@ -510,7 +510,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
        "Defines YANG-Push event notification header with the observation
        time in streaming update notifications.
 
-       Copyright (c) 2023 IETF Trust and the persons identified as
+       Copyright (c) 2024 IETF Trust and the persons identified as
        authors of the code.  All rights reserved.
 
        Redistribution and use in source and binary forms, with or without
@@ -537,23 +537,23 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
      grouping yang-push-observation-timestamp {
        description
-         "This grouping adds the observation timestamp for the observed metrics";
+         "This grouping adds the observation timestamp for the observed metrics.";
        leaf observation-time {
          type yang:date-and-time;
          description
-           "This is the time when metrics where observed";
+           "This is the time when metrics were observed.";
        }
        leaf point-in-time {
-         description
-         "This describes at which point in time the metrics where observed";
          type enumeration {
            enum accounting-start {
              description "For periodical subscriptions at the start of
-               the accounting";
+               the accounting.";
            }
            enum accounting-end {
              description "For periodical subscriptions at the end of
-               the accounting";
+               the accounting.";
+           }
+           enum state-changed {
 
 
 
@@ -562,11 +562,9 @@ Graf, et al.             Expires 4 December 2024               [Page 10]
 Internet-Draft     YANG Notifications Observation Time         June 2024
 
 
-           }
-           enum state-changed {
              description "For on-change or on-change sync on start
                subscriptions when the state change was observed in
-               real-time";
+               real-time.";
            }
            enum current-state {
              description "For on-change sync on start subscriptions when
@@ -575,6 +573,8 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
                is unkown.";
            }
          }
+         description
+         "This describes at which point in time the metrics were observed";
        }
      }
 
@@ -628,8 +628,8 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
    IANA is requested to add this document as a reference in the
    following URI in the IETF XML Registry [RFC3688].
 
-   URI:
-      urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-timestamp
+   URI:  urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-
+      timestamp
 
    Registrant Contact:  The IESG.
 
@@ -644,8 +644,8 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
    name:  ietf-yang-push-observation-timestamp
 
-   namespace:
-      urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-timestamp
+   namespace:  urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-
+      timestamp
 
    prefix:  ypot
 

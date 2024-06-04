@@ -1,4 +1,4 @@
-module ietf-yang-push-observation-timestamp-01 {
+module ietf-yang-push-observation-timestamp {
   yang-version 1.1;
   namespace
     "urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-timestamp";
@@ -29,7 +29,7 @@ module ietf-yang-push-observation-timestamp-01 {
     "Defines YANG-Push event notification header with the observation
     time in streaming update notifications.
 
-    Copyright (c) 2023 IETF Trust and the persons identified as
+    Copyright (c) 2024 IETF Trust and the persons identified as
     authors of the code.  All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@ module ietf-yang-push-observation-timestamp-01 {
     This version of this YANG module is part of RFC XXXX; see the RFC
     itself for full legal notices.";
 
-  revision 2024-05-05 {
+  revision 2024-06-02 {
     description
       "First revision";
     reference
@@ -56,23 +56,36 @@ module ietf-yang-push-observation-timestamp-01 {
 
   grouping yang-push-observation-timestamp {
     description
-      "This grouping adds the observation timestamp for the observed metrics";
+      "This grouping adds the observation timestamp for the observed metrics.";
     leaf observation-time {
       type yang:date-and-time;
       description
-        "This is the time when metrics where observed";
+        "This is the time when metrics were observed.";
     }
-    leaf moment-in-time {
-    description
-      "This describes at which point in time the metrics where observed";
-      type bits {
-        bit start {
-     position 0;
+    leaf point-in-time {
+      type enumeration {
+        enum accounting-start {
+          description "For periodical subscriptions at the start of
+            the accounting.";
         }
-        bit last {
-     position 1;
+        enum accounting-end {
+          description "For periodical subscriptions at the end of
+            the accounting.";
+        }
+        enum state-changed {
+          description "For on-change or on-change sync on start 
+            subscriptions when the state change was observed in
+            real-time.";
+        }
+        enum current-state {
+          description "For on-change sync on start subscriptions when
+            it was observed after the YANG-Push subscription was established
+            and the actual time since the state changed to current state
+            is unkown.";
         }
       }
+      description
+      "This describes at which point in time the metrics were observed";
     }
   }
 
@@ -81,13 +94,13 @@ module ietf-yang-push-observation-timestamp-01 {
     description
       "This augmentation adds the observation timestamp of the accounted metrics
       in the push-update notification.";
-    uses ypnt:yang-push-observation-timestamp;
+    uses ypot:yang-push-observation-timestamp;
   }
 
   augment "/yp:push-change-update" {
     description
       "This augmentation adds the observation timestamp of the event 
       in the push-change-update notification.";
-      uses ypnt:yang-push-observation-timestamp;
+      uses ypot:yang-push-observation-timestamp;
   }
 }
