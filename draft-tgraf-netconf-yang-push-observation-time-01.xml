@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-<!DOCTYPE rfc>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
 <?rfc toc="yes"?>
 <?rfc tocompact="yes"?>
 <?rfc tocdepth="2"?>
@@ -69,7 +69,7 @@
       </address>
     </author>
 
-    <date day="02" month="June" year="2024"/>
+    <date day="08" month="June" year="2024"/>
 
     <abstract>
       <t>This document extends the YANG-Push Notification header with the YANG
@@ -131,10 +131,15 @@
       "push-update" notification in a "periodical" subscription and the time
       when the network state change was observed.</t>
 
-      <t>point-in-time: Describes at which point in time the metrics where
-      observed. Could be at the beginning or the end of the periodical
-      subscription intervall or when the state change occured or was last
-      observed with a on-change with or without sync on start option.</t>
+      <t>point-in-time: Describes at which point in time the value of
+      observation-time was observed. For "periodical" subscription the value
+      "current-accounting" describes the point in time where the metrics where
+      being polled and observed. For "on-change" subsriptions, the value of
+      point-in-time can be either "state-changed", when the state change was
+      observed in real-time with or without sync on start option or "current-
+      state", when it was observed after the YANG-Push subscription was
+      established and the time since the state changed to current state is
+      unkown.</t>
     </section>
 
     <section anchor="Streaming-Update"
@@ -158,13 +163,13 @@
 
         <dt>point-in-time:</dt>
 
-        <dd>Describes at which point in time the value of observation-time was
-        observed. For "periodical" subscription the value of point-in-time can be either
-        (1) "accounting-start" or (2) "accounting-end" describing the start or end of
-        the accounting. For "on-change" subsriptions, the value of point-in-time 
-        can be either (3) "state-changed", when the state change was observed
-        in real-time with or without sync on start option or (4) "current-state", 
-        when it was observed after the YANG-Push
+        <dd>Describes at which point in time the observation-time was
+        observed. For "periodical" subscription this is either
+        "accounting-start" or "accounting-end" describing the start or end of
+        the accounting. For "on-change" subsriptions with or without sync on
+        start option it is "state-changed" when the state change was observed
+        in real-time. For "on-change" subsriptions with sync on start option
+        it is "current-state" when it was observed after the YANG-Push
         subscription was established and the time since the state changed to
         current state is unkown.</dd>
       </dl>
@@ -189,8 +194,8 @@ Timeline
 ---------------------------------------------------------------------->
  | (T1) Interface | (T2) YANG-Push   | (T3) YANG-Push | (T4) YANG-Push
  | state changed  | "on-change sync  | "periodical"   | "periodical"
- | to "Up".       | on start" for    | accounting     | accounting
- |                | interface state  | started.       | ends.
+ | to "Up".       | on start" for    | current        | current
+ |                | interface state  | accounting     | accounting.
  |                | and "periodical" |                |
  |                | for counters is  |                |
  |                | established.     |                |
@@ -235,6 +240,17 @@ Timeline
       </figure>
     </section>
 
+    <section title="YANG-Push capabilities">
+      <t>YANG-related system capabilites can be discovered by subscribing to
+      the datastore defined in <xref target="RFC9196"/>. This document
+      augments the "ietf-notification-capabilities" defined in <xref
+      section="5" target="RFC9196"/> so that the YANG-Push receiver can learn
+      the capabilities defined in this documents throught the datastore.</t>
+
+      <t>The definition of this YANG augmentation is specified in <xref
+      target="YANG-push-observation-timestamp-module"/>.</t>
+    </section>
+
     <section anchor="YANG-push-observation-timestamp-module"
              title="The &quot;ietf-yang-push-observation-timestamp&quot; YANG Module">
       <t>This YANG module augments the "ietf-yang-push" module with the
@@ -244,8 +260,11 @@ Timeline
       <section anchor="YANG-observation-timestamp-model"
                title="Data Model Overview">
         <section anchor="Tree View" title="Tree View">
-          <t>The following is the YANG tree diagram <xref target="RFC8340"/>
-          for the ietf-yang-push-observation-timestamp YANG module</t>
+          <t>This "ietf-yang-push-observation-timestamp" YANG module augments
+          the "ietf-yang-push" YANG module specified in Section 5 of <xref
+          target="RFC8641"/> adding the observation-time and the point-in-time
+          leaves and augments "ietf-notification-capabilities" defined in
+          <xref target="RFC9196"/> to add a system level capability.</t>
 
           <t><figure>
               <artwork><![CDATA[
@@ -257,15 +276,17 @@ module: ietf-yang-push-observation-timestamp
   augment /yp:push-change-update:
     +--ro observation-time?   yang:date-and-time
     +--ro point-in-time?      enumeration
+  augment /sysc:system-capabilities
+            /notc:subscription-capabilities:
+    +--ro yang-push-observation-supported?   notification-support
+            {yang-push-observation-timestamp}?
 ]]></artwork>
             </figure></t>
         </section>
 
         <section anchor="Full Tree View" title="Full Tree View">
           <t>The following is the YANG tree diagram <xref target="RFC8340"/>
-          for the ietf-yang-push-observation-timestamp augmentation within the
-          ietf-subscribed-notifications, including the RPCs and
-          notifications.</t>
+          showing the "ietf-yang-push" augmentation:</t>
 
           <t><figure>
               <artwork><![CDATA[
@@ -287,13 +308,16 @@ module: ietf-yang-push
        +-- datastore                               identityref
        +-- (selection-filter)?
           +--:(by-reference)
-          |  +-- selection-filter-ref              selection-filter-ref
+          |  +-- selection-filter-ref
+          |          selection-filter-ref
           +--:(within-subscription)
              +-- (filter-spec)?
                 +--:(datastore-subtree-filter)
-                |  +-- datastore-subtree-filter?   <anydata> {sn:subtree}?
+                |  +-- datastore-subtree-filter?   <anydata>
+                |          {sn:subtree}?
                 +--:(datastore-xpath-filter)
-                   +-- datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
+                   +-- datastore-xpath-filter?     yang:xpath1.0
+                           {sn:xpath}?
   augment /sn:modify-subscription/sn:input:
     +---w (update-trigger)?
        +--:(periodic)
@@ -308,13 +332,16 @@ module: ietf-yang-push
        +-- datastore                               identityref
        +-- (selection-filter)?
           +--:(by-reference)
-          |  +-- selection-filter-ref              selection-filter-ref
+          |  +-- selection-filter-ref
+          |          selection-filter-ref
           +--:(within-subscription)
              +-- (filter-spec)?
                 +--:(datastore-subtree-filter)
-                |  +-- datastore-subtree-filter?   <anydata> {sn:subtree}?
+                |  +-- datastore-subtree-filter?   <anydata>
+                |          {sn:subtree}?
                 +--:(datastore-xpath-filter)
-                   +-- datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
+                   +-- datastore-xpath-filter?     yang:xpath1.0
+                           {sn:xpath}?
   augment /sn:subscription-started:
     +--ro (update-trigger)?
        +--:(periodic)
@@ -331,13 +358,16 @@ module: ietf-yang-push
        +-- datastore                               identityref
        +-- (selection-filter)?
           +--:(by-reference)
-          |  +-- selection-filter-ref              selection-filter-ref
+          |  +-- selection-filter-ref
+          |          selection-filter-ref
           +--:(within-subscription)
              +-- (filter-spec)?
                 +--:(datastore-subtree-filter)
-                |  +-- datastore-subtree-filter?   <anydata> {sn:subtree}?
+                |  +-- datastore-subtree-filter?   <anydata>
+                |          {sn:subtree}?
                 +--:(datastore-xpath-filter)
-                   +-- datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
+                   +-- datastore-xpath-filter?     yang:xpath1.0
+                           {sn:xpath}?
   augment /sn:subscription-modified:
     +--ro (update-trigger)?
        +--:(periodic)
@@ -354,21 +384,26 @@ module: ietf-yang-push
        +-- datastore                               identityref
        +-- (selection-filter)?
           +--:(by-reference)
-          |  +-- selection-filter-ref              selection-filter-ref
+          |  +-- selection-filter-ref
+          |          selection-filter-ref
           +--:(within-subscription)
              +-- (filter-spec)?
                 +--:(datastore-subtree-filter)
-                |  +-- datastore-subtree-filter?   <anydata> {sn:subtree}?
+                |  +-- datastore-subtree-filter?   <anydata>
+                |          {sn:subtree}?
                 +--:(datastore-xpath-filter)
-                   +-- datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
+                   +-- datastore-xpath-filter?     yang:xpath1.0
+                           {sn:xpath}?
   augment /sn:filters:
     +--rw selection-filter* [filter-id]
        +--rw filter-id                         string
        +--rw (filter-spec)?
           +--:(datastore-subtree-filter)
-          |  +--rw datastore-subtree-filter?   <anydata> {sn:subtree}?
+          |  +--rw datastore-subtree-filter?   <anydata>
+          |          {sn:subtree}?
           +--:(datastore-xpath-filter)
-             +--rw datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
+             +--rw datastore-xpath-filter?     yang:xpath1.0
+                     {sn:xpath}?
   augment /sn:subscriptions/sn:subscription:
     +--rw (update-trigger)?
        +--:(periodic)
@@ -385,13 +420,16 @@ module: ietf-yang-push
        +--rw datastore                               identityref
        +--rw (selection-filter)?
           +--:(by-reference)
-          |  +--rw selection-filter-ref              selection-filter-ref
+          |  +--rw selection-filter-ref
+          |          selection-filter-ref
           +--:(within-subscription)
              +--rw (filter-spec)?
                 +--:(datastore-subtree-filter)
-                |  +--rw datastore-subtree-filter?   <anydata> {sn:subtree}?
+                |  +--rw datastore-subtree-filter?   <anydata>
+                |          {sn:subtree}?
                 +--:(datastore-xpath-filter)
-                   +--rw datastore-xpath-filter?     yang:xpath1.0 {sn:xpath}?
+                   +--rw datastore-xpath-filter?
+                           yang:xpath1.0 {sn:xpath}?
 
   rpcs:
     +---x resync-subscription {on-change}?
@@ -423,6 +461,61 @@ module: ietf-yang-push
        +--ro ypot:point-in-time?      enumeration
 ]]></artwork>
             </figure></t>
+
+          <t>The following is the YANG tree diagram <xref target="RFC8340"/>
+          showing the "ietf-system-capabilities" augmentation:</t>
+
+          <t><figure>
+              <artwork><![CDATA[
+
+module: ietf-system-capabilities
+  +--ro system-capabilities
+     +--ro datastore-capabilities* [datastore]
+     |  +--ro datastore
+     |  |       -> /yanglib:yang-library/datastore/name
+     |  +--ro per-node-capabilities* []
+     |     +--ro (node-selection)?
+     |     |  +--:(node-selector)
+     |     |     +--ro node-selector?
+     |     |             nacm:node-instance-identifier
+     |     +--ro notc:subscription-capabilities
+     |        +--ro notc:max-nodes-per-update?
+     |        |       uint32
+     |        +--ro notc:periodic-notifications-supported?
+     |        |       notification-support
+     |        +--ro (notc:update-period)?
+     |        |  +--:(notc:minimum-update-period)
+     |        |  |  +--ro notc:minimum-update-period?
+     |        |  |          uint32
+     |        |  +--:(notc:supported-update-period)
+     |        |     +--ro notc:supported-update-period*
+     |        |             uint32
+     |        +--ro notc:on-change-supported?
+     |        |       notification-support {yp:on-change}?
+     |        +--ro notc:minimum-dampening-period?
+     |        |       uint32 {yp:on-change}?
+     |        +--ro notc:supported-excluded-change-type*
+     |                union {yp:on-change}?
+     +--ro notc:subscription-capabilities
+        +--ro notc:max-nodes-per-update?               uint32
+        +--ro notc:periodic-notifications-supported?
+        |       notification-support
+        +--ro (notc:update-period)?
+        |  +--:(notc:minimum-update-period)
+        |  |  +--ro notc:minimum-update-period?        uint32
+        |  +--:(notc:supported-update-period)
+        |     +--ro notc:supported-update-period*      uint32
+        +--ro notc:on-change-supported?
+        |       notification-support {yp:on-change}?
+        +--ro notc:minimum-dampening-period?           uint32
+        |       {yp:on-change}?
+        +--ro notc:supported-excluded-change-type*     union
+        |       {yp:on-change}?
+        +--ro ypot:yang-push-observation-supported?
+                notification-support
+                {yang-push-observation-timestamp}?
+]]></artwork>
+            </figure></t>
         </section>
       </section>
 
@@ -432,7 +525,7 @@ module: ietf-yang-push
 
         <t><figure>
             <artwork><![CDATA[
-<CODE BEGINS> file "ietf-yang-push-observation-timestamping@2024-06-02.yang"
+<CODE BEGINS> file "ietf-yang-push-observation-timestamping@2024-06-08.yang"
 module ietf-yang-push-observation-timestamp {
   yang-version 1.1;
   namespace
@@ -447,6 +540,18 @@ module ietf-yang-push-observation-timestamp {
     prefix yp;
     reference
       "RFC 8641: Subscription to YANG Notifications for Datastore Updates";
+  }
+  import ietf-system-capabilities {
+    prefix sysc;
+    reference
+      "RFC 9196: YANG Modules Describing Capabilities for
+       Systems and Datastore Update Notifications";
+  }
+  import ietf-notification-capabilities {
+    prefix notc;
+    reference
+      "RFC 9196: YANG Modules Describing Capabilities for
+       Systems and Datastore Update Notifications";
   }
   organization "IETF NETCONF (Network Configuration) Working Group";
   contact
@@ -476,7 +581,7 @@ module ietf-yang-push-observation-timestamp {
     This version of this YANG module is part of RFC XXXX; see the RFC
     itself for full legal notices.";
 
-  revision 2024-06-02 {
+  revision 2024-06-08 {
     description
       "First revision";
     reference
@@ -499,24 +604,20 @@ module ietf-yang-push-observation-timestamp {
     }
     leaf point-in-time {
       type enumeration {
-        enum accounting-start {
-          description "For periodical subscriptions at the start of
-            the accounting.";
-        }
-        enum accounting-end {
-          description "For periodical subscriptions at the end of
-            the accounting.";
+        enum current-accounting {
+          description "For periodical subscriptions at the point-in-time
+            where the metrics where being polled and observed.";
         }
         enum state-changed {
           description "For on-change or on-change sync on start 
-            subscriptions when the state change was observed in
-            real-time.";
+            subscriptions the point in time when the state change was
+            observed in real-time.";
         }
         enum current-state {
-          description "For on-change sync on start subscriptions when
-            it was observed after the YANG-Push subscription was established
-            and the actual time since the state changed to current state
-            is unkown.";
+          description "For on-change sync on start subscriptions when the
+            point in time when the state was observed after the YANG-Push
+            subscription was established. The actual time when the state 
+            changed to current is unkown.";
         }
       }
       description
@@ -537,6 +638,21 @@ module ietf-yang-push-observation-timestamp {
       "This augmentation adds the observation timestamp of the event 
       in the push-change-update notification.";
       uses ypot:yang-push-observation-timestamp;
+  }
+
+  // Event capabilities
+  augment "/sysc:system-capabilities/notc:subscription-capabilities" {
+    description
+      "Add system level capabilities";
+    leaf yang-push-observation-supported {
+      if-feature "yang-push-observation-timestamp";
+      type notification-support;
+      description
+        "Specifies whether the publisher supports exporting
+        observation-timestamp and point-in-time in notifications.";
+      reference
+        "RFC XXXX: YANG Notifications Sequencing";
+    }
   }
 }
 <CODE ENDS>]]></artwork>
@@ -622,27 +738,29 @@ module ietf-yang-push-observation-timestamp {
 
   <back>
     <references title="Normative References">
-      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.8639.xml'?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.9196.xml'?>
 
-      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.8641.xml'?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.8639.xml'?>
 
-      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.3688.xml'?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.8641.xml'?>
 
-      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.6020.xml'?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.8340.xml'?>
+
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.6020.xml'?>
+
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3688.xml'?>
     </references>
 
     <references title="Informative References">
-      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.8259.xml'?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.8259.xml'?>
 
-      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.8340.xml'?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.9232.xml'?>
 
-      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.9232.xml'?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml-ids/reference.I-D.tgraf-netconf-notif-sequencing.xml'?>
 
-      <?rfc include='https://xml.resource.org/public/rfc/bibxml-ids/reference.I-D.tgraf-netconf-notif-sequencing.xml'?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml-ids/reference.I-D.ietf-netconf-https-notif.xml'?>
 
-      <?rfc include='https://xml.resource.org/public/rfc/bibxml-ids/reference.I-D.ietf-netconf-https-notif.xml'?>
-
-      <?rfc include='https://xml.resource.org/public/rfc/bibxml-ids/reference.I-D.ietf-netconf-udp-notif.xml'?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml-ids/reference.I-D.ietf-netconf-udp-notif.xml'?>
     </references>
   </back>
 </rfc>
