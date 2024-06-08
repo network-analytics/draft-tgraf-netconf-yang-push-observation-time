@@ -1,7 +1,7 @@
-module ietf-yang-push-observation-timestamp {
+module ietf-yp-observation-time {
   yang-version 1.1;
   namespace
-    "urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-timestamp";
+    "urn:ietf:params:xml:ns:yang:ietf-yp-observation-time";
   prefix ypot;
   import ietf-yang-types {
     prefix yang;
@@ -24,6 +24,12 @@ module ietf-yang-push-observation-timestamp {
     reference
       "RFC 9196: YANG Modules Describing Capabilities for
        Systems and Datastore Update Notifications";
+  }
+  import ietf-notification-sequencing {
+    prefix inotifseq;
+    reference
+      "draft-tgraf-netconf-notif-sequencing-05: YANG Notifications
+      Sequencing";
   }
   organization "IETF NETCONF (Network Configuration) Working Group";
   contact
@@ -77,16 +83,17 @@ module ietf-yang-push-observation-timestamp {
     leaf point-in-time {
       type enumeration {
         enum current-accounting {
-          description "For periodical subscriptions at the point-in-time
-            where the metrics where being polled and observed.";
+          description "The point-in-time where the metrics where
+          being polled and observed when using a periodical
+          subscription.";
         }
         enum state-changed {
-          description "For on-change or on-change sync on start 
-            subscriptions the point in time when the state change was
-            observed in real-time";
+          description "For 'on-change' or 'on-change sync on start' 
+            subscriptions, the point in time when the state change was
+            observed in real-time.";
         }
         enum current-state {
-          description "For on-change sync on start subscriptions when the
+          description "For 'on-change sync on start' subscriptions, the
             point in time when the state was observed after the YANG-Push
             subscription was established. The actual time when the state 
             changed to current is unkown.";
@@ -118,7 +125,7 @@ module ietf-yang-push-observation-timestamp {
       "Add system level capabilities";
     leaf yang-push-observation-supported {
       if-feature "yang-push-observation-timestamp";
-      type notification-support;
+      type inotifseq:notification-support;
       description
         "Specifies whether the publisher supports exporting
         observation-timestamp and point-in-time in notifications.";

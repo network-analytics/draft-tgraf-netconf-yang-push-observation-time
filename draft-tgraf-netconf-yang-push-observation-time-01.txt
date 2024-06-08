@@ -64,20 +64,20 @@ Table of Contents
    2.  Terminologies . . . . . . . . . . . . . . . . . . . . . . . .   3
    3.  Extend the Streaming Update Notifications . . . . . . . . . .   3
    4.  YANG-Push capabilities  . . . . . . . . . . . . . . . . . . .   5
-   5.  The "ietf-yang-push-observation-timestamp" YANG Module  . . .   5
+   5.  The "ietf-yp-observation-time" YANG Module  . . . . . . . . .   5
      5.1.  Data Model Overview . . . . . . . . . . . . . . . . . . .   5
-     5.2.  YANG Module . . . . . . . . . . . . . . . . . . . . . . .  12
-   6.  Implementation Status . . . . . . . . . . . . . . . . . . . .  14
-     6.1.  6WIND VSR . . . . . . . . . . . . . . . . . . . . . . . .  15
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  15
-     8.1.  URI . . . . . . . . . . . . . . . . . . . . . . . . . . .  15
-     8.2.  YANG module name  . . . . . . . . . . . . . . . . . . . .  15
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  16
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  16
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  16
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  16
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
+     5.2.  YANG Module . . . . . . . . . . . . . . . . . . . . . . .   9
+   6.  Implementation Status . . . . . . . . . . . . . . . . . . . .  12
+     6.1.  6WIND VSR . . . . . . . . . . . . . . . . . . . . . . . .  12
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  12
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
+     8.1.  URI . . . . . . . . . . . . . . . . . . . . . . . . . . .  12
+     8.2.  YANG module name  . . . . . . . . . . . . . . . . . . . .  12
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  13
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  13
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  13
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  14
 
 1.  Introduction
 
@@ -145,10 +145,10 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
    In addition, this document defines the following terms:
 
-   Observation-time: Describes when the metrics where observed in YANG-
+   Observation-time: Describes when the metrics were observed in YANG-
    Push subscriptions.
 
-   point-in-time: Describes at which point in time the metrics where
+   point-in-time: Describes at which point in time the metrics were
    observed in YANG-Push subscriptions.
 
 3.  Extend the Streaming Update Notifications
@@ -176,14 +176,14 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
       was observed.
 
    point-in-time:  Describes at which point in time the value of
-      observation-time was observed.  For "periodical" subscription the
+      observation-time was observed.  For "periodical" subscription, the
       "current-accounting" describes the point in time where the metrics
-      where being polled and observed.  For "on-change" subsriptions,
-      the value of point-in-time is either "state-changed", when the
-      state change was observed in real-time with or without sync on
-      start option.  Or it is "current-state" when it was observed after
-      the YANG-Push subscription was established and the time since the
-      state changed to current state is unkown.
+      were polled and observed.  For "on-change" subsriptions, the value
+      of point-in-time is either "state-changed", when the state change
+      was observed in real-time with or without sync on start option.
+      Or it is "current-state" when it was observed after the YANG-Push
+      subscription was established and the time since the state changed
+      to current state is unkown.
 
    Figure 1 provides an example timeline of events to describe "point-
    in-time".  At "T2", if the network node was capable to store the
@@ -226,30 +226,30 @@ Graf, et al.            Expires 10 December 2024                [Page 4]
 Internet-Draft     YANG Notifications Observation Time         June 2024
 
 
-   {
-      "ietf-notification:notification": {
-         "eventTime": "2023-02-04T16:30:11.22Z",
-         "sysName": "example-router",
-         "sequenceNumber": 187653,
-         "ietf-yang-push:push-update": {
-            "id": 1011,
-            "observation-time": "2023-02-04T16:30:09.44Z",
-            "point-in-time": "state-changed",
-            "datastore-xpath-filter": "ietf-interfaces:interfaces",
-            "datastore-contents": {
-               "ietf-interfaces:interface": {
-                  "name": {
-                     "eth0": {
-                        "oper-status": "up"
-                     }
+{
+   "ietf-notification:notification": {
+      "eventTime": "2023-02-04T16:30:11.22Z",
+      "ietf-notification-sequencing:sysName": "example-router",
+      "ietf-notification-sequencing:sequenceNumber": 187653,
+      "ietf-yang-push:push-update": {
+         "id": 1011,
+         "ietf-yp-observation-time:observation-time": "2023-02-04T16:30:09.44Z",
+         "ietf-yp-observation-time:point-in-time": "state-changed",
+         "datastore-xpath-filter": "ietf-interfaces:interfaces",
+         "datastore-contents": {
+            "ietf-interfaces:interface": {
+               "name": {
+                  "eth0": {
+                     "oper-status": "up"
                   }
                }
             }
          }
       }
    }
+}
 
-      Figure 2: JSON Push Example for a on-change notification message
+   Figure 2: JSON Push Example for a on-change notification message
 
 4.  YANG-Push capabilities
 
@@ -261,7 +261,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
    The definition of this YANG augmentation is specified in Section 5.
 
-5.  The "ietf-yang-push-observation-timestamp" YANG Module
+5.  The "ietf-yp-observation-time" YANG Module
 
    This YANG module augments the "ietf-yang-push" module with the
    observation-time and point-in-time in the "push-update" and "push-
@@ -284,13 +284,13 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
 5.1.1.  Tree View
 
-   This "ietf-yang-push-observation-timestamp" YANG module augments the
-   "ietf-yang-push" YANG module specified in Section 5 of [RFC8641]
-   adding the observation-time and the point-in-time leaves and augments
-   "ietf-notification-capabilities" defined in [RFC9196] to add a system
-   level capability.
+   This "ietf-yp-observation-time" YANG module augments the "ietf-yang-
+   push" YANG module specified in Section 5 of [RFC8641] adding the
+   "observation-time" and the "point-in-time" leaves and augments "ietf-
+   notification-capabilities" defined in [RFC9196] to add a system level
+   capability.
 
-   module: ietf-yang-push-observation-timestamp
+   module: ietf-yp-observation-time
 
      augment /yp:push-update:
        +--ro observation-time?   yang:date-and-time
@@ -298,180 +298,17 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
      augment /yp:push-change-update:
        +--ro observation-time?   yang:date-and-time
        +--ro point-in-time?      enumeration
-     augment /sysc:system-capabilities
-               /notc:subscription-capabilities:
-       +--ro yang-push-observation-supported?   notification-support
+     augment /sysc:system-capabilities/notc:subscription-capabilities:
+       +--ro yang-push-observation-supported?
+               inotifseq:notification-support
                {yang-push-observation-timestamp}?
 
 5.1.2.  Full Tree View
 
-   The following is the YANG tree diagram [RFC8340] showing the "ietf-
-   yang-push" augmentation:
+   The following YANG tree diagram [RFC8340] shows the complete
+   notification defined in the "ietf-yang-push" module:
 
    module: ietf-yang-push
-
-     augment /sn:establish-subscription/sn:input:
-       +---w (update-trigger)?
-          +--:(periodic)
-          |  +---w periodic!
-          |     +---w period         centiseconds
-          |     +---w anchor-time?   yang:date-and-time
-          +--:(on-change) {on-change}?
-             +---w on-change!
-                +---w dampening-period?   centiseconds
-                +---w sync-on-start?      boolean
-                +---w excluded-change*    change-type
-     augment /sn:establish-subscription/sn:input/sn:target:
-       +--:(datastore)
-          +-- datastore                               identityref
-          +-- (selection-filter)?
-             +--:(by-reference)
-             |  +-- selection-filter-ref
-             |          selection-filter-ref
-             +--:(within-subscription)
-                +-- (filter-spec)?
-
-
-
-Graf, et al.            Expires 10 December 2024                [Page 6]
-
-Internet-Draft     YANG Notifications Observation Time         June 2024
-
-
-                   +--:(datastore-subtree-filter)
-                   |  +-- datastore-subtree-filter?   <anydata>
-                   |          {sn:subtree}?
-                   +--:(datastore-xpath-filter)
-                      +-- datastore-xpath-filter?     yang:xpath1.0
-                              {sn:xpath}?
-     augment /sn:modify-subscription/sn:input:
-       +---w (update-trigger)?
-          +--:(periodic)
-          |  +---w periodic!
-          |     +---w period         centiseconds
-          |     +---w anchor-time?   yang:date-and-time
-          +--:(on-change) {on-change}?
-             +---w on-change!
-                +---w dampening-period?   centiseconds
-     augment /sn:modify-subscription/sn:input/sn:target:
-       +--:(datastore)
-          +-- datastore                               identityref
-          +-- (selection-filter)?
-             +--:(by-reference)
-             |  +-- selection-filter-ref
-             |          selection-filter-ref
-             +--:(within-subscription)
-                +-- (filter-spec)?
-                   +--:(datastore-subtree-filter)
-                   |  +-- datastore-subtree-filter?   <anydata>
-                   |          {sn:subtree}?
-                   +--:(datastore-xpath-filter)
-                      +-- datastore-xpath-filter?     yang:xpath1.0
-                              {sn:xpath}?
-     augment /sn:subscription-started:
-       +--ro (update-trigger)?
-          +--:(periodic)
-          |  +--ro periodic!
-          |     +--ro period         centiseconds
-          |     +--ro anchor-time?   yang:date-and-time
-          +--:(on-change) {on-change}?
-             +--ro on-change!
-                +--ro dampening-period?   centiseconds
-                +--ro sync-on-start?      boolean
-                +--ro excluded-change*    change-type
-     augment /sn:subscription-started/sn:target:
-       +--:(datastore)
-          +-- datastore                               identityref
-          +-- (selection-filter)?
-             +--:(by-reference)
-             |  +-- selection-filter-ref
-             |          selection-filter-ref
-
-
-
-Graf, et al.            Expires 10 December 2024                [Page 7]
-
-Internet-Draft     YANG Notifications Observation Time         June 2024
-
-
-             +--:(within-subscription)
-                +-- (filter-spec)?
-                   +--:(datastore-subtree-filter)
-                   |  +-- datastore-subtree-filter?   <anydata>
-                   |          {sn:subtree}?
-                   +--:(datastore-xpath-filter)
-                      +-- datastore-xpath-filter?     yang:xpath1.0
-                              {sn:xpath}?
-     augment /sn:subscription-modified:
-       +--ro (update-trigger)?
-          +--:(periodic)
-          |  +--ro periodic!
-          |     +--ro period         centiseconds
-          |     +--ro anchor-time?   yang:date-and-time
-          +--:(on-change) {on-change}?
-             +--ro on-change!
-                +--ro dampening-period?   centiseconds
-                +--ro sync-on-start?      boolean
-                +--ro excluded-change*    change-type
-     augment /sn:subscription-modified/sn:target:
-       +--:(datastore)
-          +-- datastore                               identityref
-          +-- (selection-filter)?
-             +--:(by-reference)
-             |  +-- selection-filter-ref
-             |          selection-filter-ref
-             +--:(within-subscription)
-                +-- (filter-spec)?
-                   +--:(datastore-subtree-filter)
-                   |  +-- datastore-subtree-filter?   <anydata>
-                   |          {sn:subtree}?
-                   +--:(datastore-xpath-filter)
-                      +-- datastore-xpath-filter?     yang:xpath1.0
-                              {sn:xpath}?
-     augment /sn:filters:
-       +--rw selection-filter* [filter-id]
-          +--rw filter-id                         string
-          +--rw (filter-spec)?
-             +--:(datastore-subtree-filter)
-             |  +--rw datastore-subtree-filter?   <anydata>
-             |          {sn:subtree}?
-             +--:(datastore-xpath-filter)
-                +--rw datastore-xpath-filter?     yang:xpath1.0
-                        {sn:xpath}?
-     augment /sn:subscriptions/sn:subscription:
-       +--rw (update-trigger)?
-          +--:(periodic)
-          |  +--rw periodic!
-
-
-
-Graf, et al.            Expires 10 December 2024                [Page 8]
-
-Internet-Draft     YANG Notifications Observation Time         June 2024
-
-
-          |     +--rw period         centiseconds
-          |     +--rw anchor-time?   yang:date-and-time
-          +--:(on-change) {on-change}?
-             +--rw on-change!
-                +--rw dampening-period?   centiseconds
-                +--rw sync-on-start?      boolean
-                +--rw excluded-change*    change-type
-     augment /sn:subscriptions/sn:subscription/sn:target:
-       +--:(datastore)
-          +--rw datastore                               identityref
-          +--rw (selection-filter)?
-             +--:(by-reference)
-             |  +--rw selection-filter-ref
-             |          selection-filter-ref
-             +--:(within-subscription)
-                +--rw (filter-spec)?
-                   +--:(datastore-subtree-filter)
-                   |  +--rw datastore-subtree-filter?   <anydata>
-                   |          {sn:subtree}?
-                   +--:(datastore-xpath-filter)
-                      +--rw datastore-xpath-filter?
-                              yang:xpath1.0 {sn:xpath}?
 
      rpcs:
        +---x resync-subscription {on-change}?
@@ -488,30 +325,22 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
        +---n push-change-update {on-change}?
           +--ro id?                      sn:subscription-id
           +--ro datastore-changes
-          |  +--ro yang-patch
-          |     +--ro patch-id    string
-          |     +--ro comment?    string
-          |     +--ro edit* [edit-id]
-          |        +--ro edit-id      string
-          |        +--ro operation    enumeration
-          |        +--ro target       target-resource-offset
-          |        +--ro point?       target-resource-offset
-          |        +--ro where?       enumeration
-          |        +--ro value?       <anydata>
-
-
-
-Graf, et al.            Expires 10 December 2024                [Page 9]
-
-Internet-Draft     YANG Notifications Observation Time         June 2024
-
-
           +--ro incomplete-update?       empty
           +--ro ypot:observation-time?   yang:date-and-time
           +--ro ypot:point-in-time?      enumeration
 
-   The following is the YANG tree diagram [RFC8340] showing the "ietf-
-   system-capabilities" augmentation:
+
+
+
+
+Graf, et al.            Expires 10 December 2024                [Page 6]
+
+Internet-Draft     YANG Notifications Observation Time         June 2024
+
+
+   The following YANG tree diagram [RFC8340] shows the complete "ietf-
+   system-capabilities" module with the augmentations defined in "ietf-
+   yp-observation-time" module:
 
 
 
@@ -557,7 +386,10 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
 
 
-Graf, et al.            Expires 10 December 2024               [Page 10]
+
+
+
+Graf, et al.            Expires 10 December 2024                [Page 7]
 
 Internet-Draft     YANG Notifications Observation Time         June 2024
 
@@ -573,23 +405,20 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
         |     |     +--ro node-selector?
         |     |             nacm:node-instance-identifier
         |     +--ro notc:subscription-capabilities
-        |        +--ro notc:max-nodes-per-update?
-        |        |       uint32
+        |        +--ro notc:max-nodes-per-update?               uint32
         |        +--ro notc:periodic-notifications-supported?
         |        |       notification-support
         |        +--ro (notc:update-period)?
         |        |  +--:(notc:minimum-update-period)
-        |        |  |  +--ro notc:minimum-update-period?
-        |        |  |          uint32
+        |        |  |  +--ro notc:minimum-update-period?        uint32
         |        |  +--:(notc:supported-update-period)
-        |        |     +--ro notc:supported-update-period*
-        |        |             uint32
+        |        |     +--ro notc:supported-update-period*      uint32
         |        +--ro notc:on-change-supported?
         |        |       notification-support {yp:on-change}?
-        |        +--ro notc:minimum-dampening-period?
-        |        |       uint32 {yp:on-change}?
-        |        +--ro notc:supported-excluded-change-type*
-        |                union {yp:on-change}?
+        |        +--ro notc:minimum-dampening-period?           uint32
+        |        |       {yp:on-change}?
+        |        +--ro notc:supported-excluded-change-type*     union
+        |                {yp:on-change}?
         +--ro notc:subscription-capabilities
            +--ro notc:max-nodes-per-update?               uint32
            +--ro notc:periodic-notifications-supported?
@@ -605,15 +434,18 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
            |       {yp:on-change}?
            +--ro notc:supported-excluded-change-type*     union
            |       {yp:on-change}?
+           +--ro inotifseq:sysname-sequence-supported?
+           |       notification-support {sysname-sequence}?
            +--ro ypot:yang-push-observation-supported?
-                   notification-support
+                   inotifseq:notification-support
                    {yang-push-observation-timestamp}?
 
 
 
 
 
-Graf, et al.            Expires 10 December 2024               [Page 11]
+
+Graf, et al.            Expires 10 December 2024                [Page 8]
 
 Internet-Draft     YANG Notifications Observation Time         June 2024
 
@@ -623,12 +455,11 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
    The YANG module has one leave augmenting the model of Subscription to
    YANG Notifications [RFC8639].
 
-   <CODE BEGINS>
-     file "ietf-yang-push-observation-timestamping@2024-06-08.yang"
-   module ietf-yang-push-observation-timestamp {
+   <CODE BEGINS> file "ietf-yp-observation-time@2024-06-08.yang"
+   module ietf-yp-observation-time {
      yang-version 1.1;
      namespace
-       "urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-timestamp";
+       "urn:ietf:params:xml:ns:yang:ietf-yp-observation-time";
      prefix ypot;
      import ietf-yang-types {
        prefix yang;
@@ -652,6 +483,12 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
          "RFC 9196: YANG Modules Describing Capabilities for
           Systems and Datastore Update Notifications";
      }
+     import ietf-notification-sequencing {
+       prefix inotifseq;
+       reference
+         "draft-tgraf-netconf-notif-sequencing-05: YANG Notifications
+         Sequencing";
+     }
      organization "IETF NETCONF (Network Configuration) Working Group";
      contact
        "WG Web:   <http:/tools.ietf.org/wg/netconf/>
@@ -661,19 +498,19 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
                   <mailto:thomas.graf@swisscom.com>
                   Benoit Claise
                   <mailto:benoit.claise@huawei.com>
+
+
+
+Graf, et al.            Expires 10 December 2024                [Page 9]
+
+Internet-Draft     YANG Notifications Observation Time         June 2024
+
+
                   Alex Huang Feng
                   <mailto:alex.huang-feng@insa-lyon.fr>";
 
      description
        "Defines YANG-Push event notification header with the observation
-
-
-
-Graf, et al.            Expires 10 December 2024               [Page 12]
-
-Internet-Draft     YANG Notifications Observation Time         June 2024
-
-
        time in streaming update notifications.
 
        Copyright (c) 2024 IETF Trust and the persons identified as
@@ -712,24 +549,25 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
        leaf point-in-time {
          type enumeration {
            enum current-accounting {
-             description "For periodical subscriptions at the point-in-time
-               where the metrics where being polled and observed.";
+             description "The point-in-time where the metrics where
+             being polled and observed when using a periodical
+             subscription.";
            }
            enum state-changed {
-             description "For on-change or on-change sync on start
-               subscriptions the point in time when the state change was
-               observed in real-time.";
-           }
-           enum current-state {
-             description "For on-change sync on start subscriptions when the
 
 
 
-Graf, et al.            Expires 10 December 2024               [Page 13]
+Graf, et al.            Expires 10 December 2024               [Page 10]
 
 Internet-Draft     YANG Notifications Observation Time         June 2024
 
 
+             description "For 'on-change' or 'on-change sync on start'
+               subscriptions, the point in time when the state change was
+               observed in real-time.";
+           }
+           enum current-state {
+             description "For 'on-change sync on start' subscriptions, the
                point in time when the state was observed after the YANG-Push
                subscription was established. The actual time when the state
                changed to current is unkown.";
@@ -761,7 +599,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
          "Add system level capabilities";
        leaf yang-push-observation-supported {
          if-feature "yang-push-observation-timestamp";
-         type notification-support;
+         type inotifseq:notification-support;
          description
            "Specifies whether the publisher supports exporting
            observation-timestamp and point-in-time in notifications.";
@@ -772,19 +610,17 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
    }
    <CODE ENDS>
 
-6.  Implementation Status
-
-   Note to the RFC-Editor: Please remove this section before publishing.
 
 
 
-
-
-
-Graf, et al.            Expires 10 December 2024               [Page 14]
+Graf, et al.            Expires 10 December 2024               [Page 11]
 
 Internet-Draft     YANG Notifications Observation Time         June 2024
 
+
+6.  Implementation Status
+
+   Note to the RFC-Editor: Please remove this section before publishing.
 
 6.1.  6WIND VSR
 
@@ -808,8 +644,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
    IANA is requested to add this document as a reference in the
    following URI in the IETF XML Registry [RFC3688].
 
-   URI:
-      urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-timestamp
+   URI:  urn:ietf:params:xml:ns:yang:ietf-yp-observation-time
 
    Registrant Contact:  The IESG.
 
@@ -822,10 +657,9 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
    This document registers the following YANG module in the YANG Module
    Names Registry [RFC6020], within the "YANG Parameters" registry:
 
-   name:  ietf-yang-push-observation-timestamp
+   name:  ietf-yp-observation-time
 
-   namespace:
-      urn:ietf:params:xml:ns:yang:ietf-yang-push-observation-timestamp
+   namespace:  urn:ietf:params:xml:ns:yang:ietf-yp-observation-time
 
    prefix:  ypot
 
@@ -835,9 +669,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
 
 
-
-
-Graf, et al.            Expires 10 December 2024               [Page 15]
+Graf, et al.            Expires 10 December 2024               [Page 12]
 
 Internet-Draft     YANG Notifications Observation Time         June 2024
 
@@ -893,7 +725,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
 
 
-Graf, et al.            Expires 10 December 2024               [Page 16]
+Graf, et al.            Expires 10 December 2024               [Page 13]
 
 Internet-Draft     YANG Notifications Observation Time         June 2024
 
@@ -949,4 +781,4 @@ Authors' Addresses
 
 
 
-Graf, et al.            Expires 10 December 2024               [Page 17]
+Graf, et al.            Expires 10 December 2024               [Page 14]
