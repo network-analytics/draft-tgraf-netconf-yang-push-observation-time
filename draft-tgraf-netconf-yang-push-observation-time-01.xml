@@ -127,19 +127,11 @@
 
       <t>In addition, this document defines the following terms:</t>
 
-      <t>Observation-time: Describes the measurement observation time for the
-      "push-update" notification in a "periodical" subscription and the time
-      when the network state change was observed.</t>
+      <t>Observation-time: Describes when the metrics where observed in
+      YANG-Push subscriptions.</t>
 
-      <t>point-in-time: Describes at which point in time the value of
-      observation-time was observed. For "periodical" subscription the value
-      "current-accounting" describes the point in time where the metrics where
-      being polled and observed. For "on-change" subsriptions, the value of
-      point-in-time can be either "state-changed", when the state change was
-      observed in real-time with or without sync on start option or "current-
-      state", when it was observed after the YANG-Push subscription was
-      established and the time since the state changed to current state is
-      unkown.</t>
+      <t>point-in-time: Describes at which point in time the metrics where
+      observed in YANG-Push subscriptions.</t>
     </section>
 
     <section anchor="Streaming-Update"
@@ -163,15 +155,15 @@
 
         <dt>point-in-time:</dt>
 
-        <dd>Describes at which point in time the observation-time was
-        observed. For "periodical" subscription this is either
-        "accounting-start" or "accounting-end" describing the start or end of
-        the accounting. For "on-change" subsriptions with or without sync on
-        start option it is "state-changed" when the state change was observed
-        in real-time. For "on-change" subsriptions with sync on start option
-        it is "current-state" when it was observed after the YANG-Push
-        subscription was established and the time since the state changed to
-        current state is unkown.</dd>
+        <dd>Describes at which point in time the value of observation-time was
+        observed. For "periodical" subscription the "current-accounting"
+        describes the point in time where the metrics where being polled and
+        observed. For "on-change" subsriptions, the value of point-in-time is
+        either "state-changed", when the state change was observed in
+        real-time with or without sync on start option. Or it is
+        "current-state" when it was observed after the YANG-Push subscription
+        was established and the time since the state changed to current state
+        is unkown.</dd>
       </dl>
 
       <t><xref target="timeline_examplen_fig"/> provides an example timeline
