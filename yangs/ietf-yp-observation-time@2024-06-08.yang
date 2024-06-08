@@ -129,7 +129,7 @@ module ietf-yp-observation-time {
         "Specifies whether the publisher supports exporting
         observation-timestamp and point-in-time in notifications.";
       reference
-        "RFC XXXX: YANG Notifications Sequencing";
+        "RFC XXXX: YANG Notifications Observation Time";
     }
   }
 }

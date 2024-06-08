@@ -603,7 +603,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
            "Specifies whether the publisher supports exporting
            observation-timestamp and point-in-time in notifications.";
          reference
-           "RFC XXXX: YANG Notifications Sequencing";
+           "RFC XXXX: YANG Notifications Observation Time";
        }
      }
    }
