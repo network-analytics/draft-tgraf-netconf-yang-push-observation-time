@@ -453,9 +453,8 @@ module ietf-yp-observation-time {
     leaf point-in-time {
       type enumeration {
         enum current-accounting {
-          description "The point-in-time where the metrics where
-          being polled and observed when using a periodical
-          subscription.";
+          description "For periodical subscriptions, the point-in-time
+          where the metrics are being polled and observed.";
         }
         enum state-changed {
           description "For 'on-change' or 'on-change sync on start' 
