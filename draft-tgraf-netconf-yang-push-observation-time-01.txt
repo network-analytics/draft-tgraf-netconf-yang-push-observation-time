@@ -193,11 +193,9 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
    changed".  If the network node is not capable to store the timestamp
    prior to the YANG-Push subscription establishment at "T2", the
    observation-timestamp of "T2" is used and "point-in-time" is set to
-   "current-state".  Depending of capability and implementation of
-   "periodical" YANG-Push subscription, either the "observation-
-   timestamp" of "T3" with "point-in-time" is set to "accounting-start"
-   or "observation-timestamp" of "T4" with "point-in-time" is set to
-   "accounting-end".
+   "current-state".  The "observation-timestamp" of "T3" is set to "T3"
+   when the metric was polled and observed amd the "point-in-time" when
+   it was observed is set to "current-accounting".
 
  Timeline
  ---------------------------------------------------------------------->
@@ -218,6 +216,8 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
    [I-D.ietf-netconf-https-notif] or UDP-based
    [I-D.ietf-netconf-udp-notif] transport with
    [I-D.tgraf-netconf-notif-sequencing] as extension.
+
+
 
 
 

@@ -174,11 +174,9 @@
       "state-changed". If the network node is not capable to store the
       timestamp prior to the YANG-Push subscription establishment at "T2", the
       observation-timestamp of "T2" is used and "point-in-time" is set to
-      "current-state". Depending of capability and implementation of
-      "periodical" YANG-Push subscription, either the "observation-timestamp"
-      of "T3" with "point-in-time" is set to "accounting-start" or
-      "observation-timestamp" of "T4" with "point-in-time" is set to
-      "accounting-end".</t>
+      "current-state". The "observation-timestamp" of "T3" is set to "T3" when
+      the metric was polled and observed amd the "point-in-time" when it was
+      observed is set to "current-accounting".</t>
 
       <figure anchor="timeline_examplen_fig" title="Example timeline">
         <artwork><![CDATA[
@@ -252,14 +250,15 @@ Timeline
       <section anchor="YANG-observation-timestamp-model"
                title="Data Model Overview">
         <section anchor="Tree View" title="Tree View">
-          <t>This "ietf-yp-observation-time" YANG module augments
-          the "ietf-yang-push" YANG module specified in Section 5 of <xref
-          target="RFC8641"/> adding the "observation-time" and the "point-in-time"
-          leaves and augments "ietf-notification-capabilities" defined in
-          <xref target="RFC9196"/> to add a system level capability.</t>
+          <t>This "ietf-yp-observation-time" YANG module augments the
+          "ietf-yang-push" YANG module specified in Section 5 of <xref
+          target="RFC8641"/> adding the "observation-time" and the
+          "point-in-time" leaves and augments "ietf-notification-capabilities"
+          defined in <xref target="RFC9196"/> to add a system level
+          capability.</t>
 
           <figure>
-              <artwork><![CDATA[
+            <artwork><![CDATA[
 module: ietf-yp-observation-time
 
   augment /yp:push-update:
@@ -273,15 +272,16 @@ module: ietf-yp-observation-time
             inotifseq:notification-support
             {yang-push-observation-timestamp}?
 ]]></artwork>
-            </figure>
+          </figure>
         </section>
 
         <section anchor="Full Tree View" title="Full Tree View">
-          <t>The following YANG tree diagram <xref target="RFC8340"/>
-          shows the complete notification defined in the "ietf-yang-push" module:</t>
+          <t>The following YANG tree diagram <xref target="RFC8340"/> shows
+          the complete notification defined in the "ietf-yang-push"
+          module:</t>
 
           <figure>
-              <artwork><![CDATA[
+            <artwork><![CDATA[
 module: ietf-yang-push
 
   rpcs:
@@ -303,14 +303,14 @@ module: ietf-yang-push
        +--ro ypot:observation-time?   yang:date-and-time
        +--ro ypot:point-in-time?      enumeration
 ]]></artwork>
-            </figure>
+          </figure>
 
-          <t>The following YANG tree diagram <xref target="RFC8340"/>
-          shows the complete "ietf-system-capabilities" module with
-          the augmentations defined in "ietf-yp-observation-time" module:</t>
+          <t>The following YANG tree diagram <xref target="RFC8340"/> shows
+          the complete "ietf-system-capabilities" module with the
+          augmentations defined in "ietf-yp-observation-time" module:</t>
 
           <figure>
-              <artwork><![CDATA[
+            <artwork><![CDATA[
 module: ietf-system-capabilities
   +--ro system-capabilities
      +--ro datastore-capabilities* [datastore]
@@ -357,7 +357,7 @@ module: ietf-system-capabilities
                 inotifseq:notification-support
                 {yang-push-observation-timestamp}?
 ]]></artwork>
-            </figure>
+          </figure>
         </section>
       </section>
 
