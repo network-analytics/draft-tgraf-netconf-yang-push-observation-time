@@ -69,7 +69,7 @@
       </address>
     </author>
 
-    <date day="08" month="June" year="2024"/>
+    <date day="16" month="June" year="2024"/>
 
     <abstract>
       <t>This document extends the YANG-Push Notification header with the YANG
@@ -158,12 +158,12 @@
         <dd>Describes at which point in time the value of observation-time was
         observed. For "periodical" subscription, the "current-accounting"
         describes the point in time where the metrics were polled and
-        observed. For "on-change" subsriptions, the value of point-in-time is
+        observed. For "on-change" subscriptions, the value of point-in-time is
         either "state-changed", when the state change was observed in
         real-time with or without sync on start option. Or it is
         "current-state" when it was observed after the YANG-Push subscription
         was established and the time since the state changed to current state
-        is unkown.</dd>
+        is unknown.</dd>
       </dl>
 
       <t><xref target="timeline_examplen_fig"/> provides an example timeline
@@ -175,7 +175,7 @@
       timestamp prior to the YANG-Push subscription establishment at "T2", the
       observation-timestamp of "T2" is used and "point-in-time" is set to
       "current-state". The "observation-timestamp" of "T3" is set to "T3" when
-      the metric was polled and observed amd the "point-in-time" when it was
+      the metric was polled and observed and the "point-in-time" when it was
       observed is set to "current-accounting".</t>
 
       <figure anchor="timeline_examplen_fig" title="Example timeline">
@@ -231,11 +231,11 @@ Timeline
     </section>
 
     <section title="YANG-Push capabilities">
-      <t>YANG-related system capabilites can be discovered by subscribing to
+      <t>YANG-related system capabilities can be discovered by subscribing to
       the datastore defined in <xref target="RFC9196"/>. This document
       augments the "ietf-notification-capabilities" defined in <xref
       section="5" target="RFC9196"/> so that the YANG-Push receiver can learn
-      the capabilities defined in this documents throught the datastore.</t>
+      the capabilities defined in this documents through the datastore.</t>
 
       <t>The definition of this YANG augmentation is specified in <xref
       target="YANG-push-observation-timestamp-module"/>.</t>
