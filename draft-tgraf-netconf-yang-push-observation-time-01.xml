@@ -69,7 +69,7 @@
       </address>
     </author>
 
-    <date day="16" month="June" year="2024"/>
+    <date day="18" month="June" year="2024"/>
 
     <abstract>
       <t>This document extends the YANG-Push Notification header with the YANG
@@ -104,15 +104,15 @@
       close to the time bucket boundaries, a time bucket is going to have
       periodically 0 or 2 measurements indexed instead of 1. Leading to
       inconsistent accounting errors in the time series database. This problem
-      is resolved by using the observation-time instead of the eventTime for
-      time series database indexing.</t>
+      is resolved by using the observation timestamp instead of the eventTime
+      for time series database indexing.</t>
 
       <t>By extending the YANG-Push Notification header with the YANG objects
-      observation-time and point-in-time for streaming update notifications it
-      is ensured that the "observation-time" timestamp is always present with
-      the best available time, can be therefore used unconditionally in the
-      data processing chain and with point-in-time there is semantic
-      describing the when it was observed in time.</t>
+      timestamp and point-in-time for streaming update notifications it is
+      ensured that the observation timestamp is always present with the best
+      available time, can be therefore used unconditionally in the data
+      processing chain and with point-in-time there is semantic describing the
+      when it was observed in time.</t>
     </section>
 
     <section title="Terminologies">
@@ -127,11 +127,11 @@
 
       <t>In addition, this document defines the following terms:</t>
 
-      <t>Observation-time: Describes when the metrics were observed in
-      YANG-Push subscriptions.</t>
+      <t>Timestamp: Describes when the metric(s) (reported in YANG-Push
+      subscriptions) were observed.</t>
 
-      <t>point-in-time: Describes at which point in time the metrics were
-      observed in YANG-Push subscriptions.</t>
+      <t>Point-in-time: Describes at which point in time the metric(s)
+      reported in YANG-Push subscriptions) were observed.</t>
     </section>
 
     <section anchor="Streaming-Update"
@@ -142,25 +142,25 @@
       notifications.</t>
 
       <dl>
-        <dt>observation-time:</dt>
+        <dt>timestamp:</dt>
 
-        <dd>Describes the measurement observation time for the "push-update"
+        <dd>States the measurement observation time for the "push-update"
         notification in a "periodical" and for the "push-change-update"
         notification in a "on-change" subscription. By comparing the
-        "observation-time" of two "push-update" notifications in a periodical
-        subscription, the collector can deduce the actual cadence of the
-        measurements, and compare it with the subscription configuration. In
-        case of an "on-change" subscription it describes the time when the
-        network state change was observed.</dd>
+        observation timestamp of two "push-update" notifications in a
+        periodical subscription, the collector can deduce the actual cadence
+        of the measurements, and compare it with the subscription
+        configuration. In case of an "on-change" subscription it states the
+        time when the network state change was observed.</dd>
 
         <dt>point-in-time:</dt>
 
-        <dd>Describes at which point in time the value of observation-time was
-        observed. For "periodical" subscription, the "current-accounting"
-        describes the point in time where the metrics were polled and
-        observed. For "on-change" subscriptions, the value of point-in-time is
+        <dd>States at which point in time the value of the observation time
+        was observed. For "periodical" subscription, the "current-accounting"
+        states the point in time where the metrics were polled and observed.
+        For "on-change" subscriptions, the value of point-in-time states
         either "state-changed", when the state change was observed in
-        real-time with or without sync on start option. Or it is
+        real-time with or without sync on start option. Or it states
         "current-state" when it was observed after the YANG-Push subscription
         was established and the time since the state changed to current state
         is unknown.</dd>
@@ -170,11 +170,11 @@
       of events to describe "point-in-time". At "T2", if the network node was
       capable to store the initial state change observation timestamp from
       "T1" prior to the YANG-Push subscription establishment at "T2", the
-      observation-timestamp of "T1" is used and "point-in-time" is set to
+      observation timestamp of "T1" is used and "point-in-time" is set to
       "state-changed". If the network node is not capable to store the
       timestamp prior to the YANG-Push subscription establishment at "T2", the
-      observation-timestamp of "T2" is used and "point-in-time" is set to
-      "current-state". The "observation-timestamp" of "T3" is set to "T3" when
+      observation timestamp of "T2" is used and "point-in-time" is set to
+      "current-state". The observation timestamp of "T3" is set to "T3" when
       the metric was polled and observed and the "point-in-time" when it was
       observed is set to "current-accounting".</t>
 
@@ -211,8 +211,8 @@ Timeline
       "ietf-notification-sequencing:sequenceNumber": 187653,
       "ietf-yang-push:push-update": {
          "id": 1011,
-         "ietf-yp-observation-time:observation-time": "2023-02-04T16:30:09.44Z",
-         "ietf-yp-observation-time:point-in-time": "state-changed",
+         "ietf-yp-observation:timestamp": "2023-02-04T16:30:09.44Z",
+         "ietf-yp-observation:point-in-time": "state-changed",
          "datastore-xpath-filter": "ietf-interfaces:interfaces",
          "datastore-contents": {
             "ietf-interfaces:interface": {
@@ -238,34 +238,32 @@ Timeline
       the capabilities defined in this documents through the datastore.</t>
 
       <t>The definition of this YANG augmentation is specified in <xref
-      target="YANG-push-observation-timestamp-module"/>.</t>
+      target="YANG-push-observation-module"/>.</t>
     </section>
 
-    <section anchor="YANG-push-observation-timestamp-module"
-             title="The &quot;ietf-yp-observation-time&quot; YANG Module">
+    <section anchor="YANG-push-observation-module"
+             title="The &quot;ietf-yp-observation&quot; YANG Module">
       <t>This YANG module augments the "ietf-yang-push" module with the
-      observation-time and point-in-time in the "push-update" and
+      observation timestamp and point-in-time in the "push-update" and
       "push-change-update" streaming update notifications.</t>
 
-      <section anchor="YANG-observation-timestamp-model"
-               title="Data Model Overview">
+      <section anchor="YANG-observation-model" title="Data Model Overview">
         <section anchor="Tree View" title="Tree View">
-          <t>This "ietf-yp-observation-time" YANG module augments the
+          <t>This "ietf-yp-observation" YANG module augments the
           "ietf-yang-push" YANG module specified in Section 5 of <xref
-          target="RFC8641"/> adding the "observation-time" and the
-          "point-in-time" leaves and augments "ietf-notification-capabilities"
-          defined in <xref target="RFC9196"/> to add a system level
-          capability.</t>
+          target="RFC8641"/> adding the "timestamp" and the "point-in-time"
+          leaves and augments "ietf-notification-capabilities" defined in
+          <xref target="RFC9196"/> to add a system level capability.</t>
 
           <figure>
             <artwork><![CDATA[
-module: ietf-yp-observation-time
+module: ietf-yp-observation
 
   augment /yp:push-update:
-    +--ro observation-time?   yang:date-and-time
+    +--ro timestamp?          yang:date-and-time
     +--ro point-in-time?      enumeration
   augment /yp:push-change-update:
-    +--ro observation-time?   yang:date-and-time
+    +--ro timestamp?          yang:date-and-time
     +--ro point-in-time?      enumeration
   augment /sysc:system-capabilities/notc:subscription-capabilities:
     +--ro yang-push-observation-supported?
@@ -294,20 +292,20 @@ module: ietf-yang-push
     |  +--ro id?                      sn:subscription-id
     |  +--ro datastore-contents?      <anydata>
     |  +--ro incomplete-update?       empty
-    |  +--ro ypot:observation-time?   yang:date-and-time
+    |  +--ro ypot:timestamp?          yang:date-and-time
     |  +--ro ypot:point-in-time?      enumeration
     +---n push-change-update {on-change}?
        +--ro id?                      sn:subscription-id
        +--ro datastore-changes
        +--ro incomplete-update?       empty
-       +--ro ypot:observation-time?   yang:date-and-time
+       +--ro ypot:timestamp?          yang:date-and-time
        +--ro ypot:point-in-time?      enumeration
 ]]></artwork>
           </figure>
 
           <t>The following YANG tree diagram <xref target="RFC8340"/> shows
           the complete "ietf-system-capabilities" module with the
-          augmentations defined in "ietf-yp-observation-time" module:</t>
+          augmentations defined in "ietf-yp-observation" module:</t>
 
           <figure>
             <artwork><![CDATA[
@@ -361,17 +359,17 @@ module: ietf-system-capabilities
         </section>
       </section>
 
-      <section anchor="YANG-observation-timestamp-module" title="YANG Module">
+      <section anchor="YANG-observation-module" title="YANG Module">
         <t>The YANG module has one leave augmenting the model of <xref
         target="RFC8639">Subscription to YANG Notifications</xref>.</t>
 
         <t><figure>
             <artwork><![CDATA[
-<CODE BEGINS> file "ietf-yp-observation-time@2024-06-08.yang"
-module ietf-yp-observation-time {
+<CODE BEGINS> file "ietf-yp-observation@2024-06-18.yang"
+module ietf-yp-observation {
   yang-version 1.1;
   namespace
-    "urn:ietf:params:xml:ns:yang:ietf-yp-observation-time";
+    "urn:ietf:params:xml:ns:yang:ietf-yp-observation";
   prefix ypot;
   import ietf-yang-types {
     prefix yang;
@@ -429,7 +427,7 @@ module ietf-yp-observation-time {
     This version of this YANG module is part of RFC XXXX; see the RFC
     itself for full legal notices.";
 
-  revision 2024-06-08 {
+  revision 2024-06-18 {
     description
       "First revision";
     reference
@@ -442,10 +440,10 @@ module ietf-yp-observation-time {
       the observation timestamps in streaming update notifications.";
   }
 
-  grouping yang-push-observation-timestamp {
+  grouping yang-push-observation {
     description
       "This grouping adds the observation timestamp for the observed metrics.";
-    leaf observation-time {
+    leaf timestamp {
       type yang:date-and-time;
       description
         "This is the time when metrics were observed.";
@@ -478,14 +476,14 @@ module ietf-yp-observation-time {
     description
       "This augmentation adds the observation timestamp of the accounted metrics
       in the push-update notification.";
-    uses ypot:yang-push-observation-timestamp;
+    uses ypot:yang-push-observation;
   }
 
   augment "/yp:push-change-update" {
     description
       "This augmentation adds the observation timestamp of the event 
       in the push-change-update notification.";
-      uses ypot:yang-push-observation-timestamp;
+      uses ypot:yang-push-observation;
   }
 
   // Event capabilities
@@ -536,7 +534,7 @@ module ietf-yp-observation-time {
         <dl>
           <dt>URI:</dt>
 
-          <dd>urn:ietf:params:xml:ns:yang:ietf-yp-observation-time</dd>
+          <dd>urn:ietf:params:xml:ns:yang:ietf-yp-observation</dd>
 
           <dt>Registrant Contact:</dt>
 
@@ -560,11 +558,11 @@ module ietf-yp-observation-time {
         <dl>
           <dt>name:</dt>
 
-          <dd>ietf-yp-observation-time</dd>
+          <dd>ietf-yp-observation</dd>
 
           <dt>namespace:</dt>
 
-          <dd>urn:ietf:params:xml:ns:yang:ietf-yp-observation-time</dd>
+          <dd>urn:ietf:params:xml:ns:yang:ietf-yp-observation</dd>
 
           <dt>prefix:</dt>
 

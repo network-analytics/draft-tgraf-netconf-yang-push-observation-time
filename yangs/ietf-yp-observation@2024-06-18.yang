@@ -1,7 +1,7 @@
-module ietf-yp-observation-time {
+module ietf-yp-observation {
   yang-version 1.1;
   namespace
-    "urn:ietf:params:xml:ns:yang:ietf-yp-observation-time";
+    "urn:ietf:params:xml:ns:yang:ietf-yp-observation";
   prefix ypot;
   import ietf-yang-types {
     prefix yang;
@@ -72,10 +72,10 @@ module ietf-yp-observation-time {
       the observation timestamps in streaming update notifications.";
   }
 
-  grouping yang-push-observation-timestamp {
+  grouping yang-push-observation {
     description
       "This grouping adds the observation timestamp for the observed metrics.";
-    leaf observation-time {
+    leaf timestamp {
       type yang:date-and-time;
       description
         "This is the time when metrics were observed.";
@@ -108,14 +108,14 @@ module ietf-yp-observation-time {
     description
       "This augmentation adds the observation timestamp of the accounted metrics
       in the push-update notification.";
-    uses ypot:yang-push-observation-timestamp;
+    uses ypot:yang-push-observation;
   }
 
   augment "/yp:push-change-update" {
     description
       "This augmentation adds the observation timestamp of the event 
       in the push-change-update notification.";
-      uses ypot:yang-push-observation-timestamp;
+      uses ypot:yang-push-observation;
   }
 
   // Event capabilities
