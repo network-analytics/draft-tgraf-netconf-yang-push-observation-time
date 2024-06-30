@@ -675,8 +675,8 @@ module ietf-yp-observation {
 
     <section anchor="Acknowledgements" title="Acknowledgements">
       <t>The authors would like to thank Rob Wilton, Nick Corran, Pierre
-      Francois Ahmed Elhassany and Jean Quilbeuf for their review and valuable
-      comments.</t>
+      Francois Ahmed Elhassany, Jean Quilbeuf and Marco Tollini for their
+      review and valuable comments.</t>
     </section>
   </middle>
 

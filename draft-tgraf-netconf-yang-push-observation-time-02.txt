@@ -746,8 +746,8 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 10.  Acknowledgements
 
    The authors would like to thank Rob Wilton, Nick Corran, Pierre
-   Francois Ahmed Elhassany and Jean Quilbeuf for their review and
-   valuable comments.
+   Francois Ahmed Elhassany, Jean Quilbeuf and Marco Tollini for their
+   review and valuable comments.
 
 11.  References
 
