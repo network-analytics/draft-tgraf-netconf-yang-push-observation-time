@@ -16,9 +16,9 @@ Expires: 1 January 2025                                           Huawei
 
 Abstract
 
-   This document extends the YANG-Push Notification header with the YANG
-   objects observation timestamp and timestamp type for streaming update
-   notifications.
+   This document extends YANG-Push Notifications with the YANG objects
+   "observation-time" timestamp and "point-in-time" enumeration for
+   streaming update YANG-Push notifications.
 
 Status of This Memo
 
@@ -69,14 +69,15 @@ Table of Contents
      5.2.  YANG Module . . . . . . . . . . . . . . . . . . . . . . .  10
    6.  Implementation Status . . . . . . . . . . . . . . . . . . . .  13
      6.1.  6WIND VSR . . . . . . . . . . . . . . . . . . . . . . . .  13
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
-     8.1.  URI . . . . . . . . . . . . . . . . . . . . . . . . . . .  13
-     8.2.  YANG module name  . . . . . . . . . . . . . . . . . . . .  13
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  14
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  14
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  14
+   7.  Operational Considerations  . . . . . . . . . . . . . . . . .  13
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
+     9.1.  URI . . . . . . . . . . . . . . . . . . . . . . . . . . .  13
+     9.2.  YANG module name  . . . . . . . . . . . . . . . . . . . .  14
+   10. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  14
+   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
+     11.1.  Normative References . . . . . . . . . . . . . . . . . .  14
+     11.2.  Informative References . . . . . . . . . . . . . . . . .  15
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  15
 
 1.  Introduction
@@ -108,7 +109,6 @@ Table of Contents
 
 
 
-
 Graf, et al.             Expires 1 January 2025                 [Page 2]
 
 Internet-Draft     YANG Notifications Observation Time         June 2024
@@ -126,7 +126,7 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
    "eventTime" for time series database indexing.
 
    By extending YANG-Push Notifications with the "observation-time" YANG
-   object timestamp and a "point-in-time" YANG enumeration for streaming
+   object timestamp and a "point-in-time" enumeration for streaming
    update YANG-Push notifications it is ensured that the network
    "observation-time" timestamp is always present with the best
    available time, can be therefore used unconditionally in the data
@@ -684,18 +684,31 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
    UDP-based Transport for Configured Subscriptions
    [I-D.ietf-netconf-udp-notif] in their VSR platform.
 
-7.  Security Considerations
+7.  Operational Considerations
+
+   Since the timespan between network state change and subscription
+   establishment as exampled in timeline with "T1" and "T2" in Figure 1
+   for "on-change sync on start" subscriptions could be very long when
+   the network node uptime and thus the state change was long time ago
+   and the subscription is establish very recent, a time series database
+   may discard the notification message at ingestion since the
+   "observation-time" timestamp is in the very past and therefore would
+   have potential performance impact on the time series database
+   indexing.  This can be circumvent by using the eventTime for indexing
+   or a change to "on-change" subscriptions instead.
+
+8.  Security Considerations
 
    The security considerations for the YANG notifications subscription
    mechanism are described in [RFC8641].  This document adds no
    additional security considerations.
 
-8.  IANA Considerations
+9.  IANA Considerations
 
    This document describes the URI used for the IETF XML Registry and
    registers a new YANG module name.
 
-8.1.  URI
+9.1.  URI
 
    IANA is requested to add this document as a reference in the
    following URI in the IETF XML Registry [RFC3688].
@@ -708,7 +721,16 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
    Reference:  RFC5277; RFC-to-be
 
-8.2.  YANG module name
+
+
+
+
+Graf, et al.             Expires 1 January 2025                [Page 13]
+
+Internet-Draft     YANG Notifications Observation Time         June 2024
+
+
+9.2.  YANG module name
 
    This document registers the following YANG module in the YANG Module
    Names Registry [RFC6020], within the "YANG Parameters" registry:
@@ -721,24 +743,15 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
    Reference:  RFC-to-be
 
-
-
-
-
-Graf, et al.             Expires 1 January 2025                [Page 13]
-
-Internet-Draft     YANG Notifications Observation Time         June 2024
-
-
-9.  Acknowledgements
+10.  Acknowledgements
 
    The authors would like to thank Rob Wilton, Nick Corran, Pierre
    Francois Ahmed Elhassany and Jean Quilbeuf for their review and
    valuable comments.
 
-10.  References
+11.  References
 
-10.1.  Normative References
+11.1.  Normative References
 
    [RFC3688]  Mealling, M., "The IETF XML Registry", BCP 81, RFC 3688,
               DOI 10.17487/RFC3688, January 2004,
@@ -762,19 +775,6 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
               for Datastore Updates", RFC 8641, DOI 10.17487/RFC8641,
               September 2019, <https://www.rfc-editor.org/info/rfc8641>.
 
-   [RFC8792]  Watsen, K., Auerswald, E., Farrel, A., and Q. Wu,
-              "Handling Long Lines in Content of Internet-Drafts and
-              RFCs", RFC 8792, DOI 10.17487/RFC8792, June 2020,
-              <https://www.rfc-editor.org/info/rfc8792>.
-
-   [RFC9196]  Lengyel, B., Clemm, A., and B. Claise, "YANG Modules
-              Describing Capabilities for Systems and Datastore Update
-              Notifications", RFC 9196, DOI 10.17487/RFC9196, February
-              2022, <https://www.rfc-editor.org/info/rfc9196>.
-
-10.2.  Informative References
-
-
 
 
 
@@ -785,6 +785,18 @@ Graf, et al.             Expires 1 January 2025                [Page 14]
 
 Internet-Draft     YANG Notifications Observation Time         June 2024
 
+
+   [RFC8792]  Watsen, K., Auerswald, E., Farrel, A., and Q. Wu,
+              "Handling Long Lines in Content of Internet-Drafts and
+              RFCs", RFC 8792, DOI 10.17487/RFC8792, June 2020,
+              <https://www.rfc-editor.org/info/rfc8792>.
+
+   [RFC9196]  Lengyel, B., Clemm, A., and B. Claise, "YANG Modules
+              Describing Capabilities for Systems and Datastore Update
+              Notifications", RFC 9196, DOI 10.17487/RFC9196, February
+              2022, <https://www.rfc-editor.org/info/rfc9196>.
+
+11.2.  Informative References
 
    [I-D.ietf-netconf-https-notif]
               Jethanandani, M. and K. Watsen, "An HTTPS-based Transport
@@ -821,6 +833,15 @@ Internet-Draft     YANG Notifications Observation Time         June 2024
 
 Authors' Addresses
 
+
+
+
+
+Graf, et al.             Expires 1 January 2025                [Page 15]
+
+Internet-Draft     YANG Notifications Observation Time         June 2024
+
+
    Thomas Graf
    Swisscom
    Binzring 17
@@ -834,32 +855,11 @@ Authors' Addresses
    Email: benoit.claise@huawei.com
 
 
-
-
-
-Graf, et al.             Expires 1 January 2025                [Page 15]
-
-Internet-Draft     YANG Notifications Observation Time         June 2024
-
-
    Alex Huang Feng
    INSA-Lyon
    Lyon
    France
    Email: alex.huang-feng@insa-lyon.fr
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

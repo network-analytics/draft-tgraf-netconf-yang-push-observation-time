@@ -72,9 +72,9 @@
     <date day="30" month="June" year="2024"/>
 
     <abstract>
-      <t>This document extends the YANG-Push Notification header with the YANG
-      objects observation timestamp and timestamp type for streaming update
-      notifications.</t>
+      <t>This document extends YANG-Push Notifications with the YANG objects
+      "observation-time" timestamp and "point-in-time" enumeration for
+      streaming update YANG-Push notifications.</t>
     </abstract>
   </front>
 
@@ -108,8 +108,8 @@
       the "eventTime" for time series database indexing.</t>
 
       <t>By extending YANG-Push Notifications with the "observation-time" YANG
-      object timestamp and a "point-in-time" YANG enumeration for streaming
-      update YANG-Push notifications it is ensured that the network
+      object timestamp and a "point-in-time" enumeration for streaming update
+      YANG-Push notifications it is ensured that the network
       "observation-time" timestamp is always present with the best available
       time, can be therefore used unconditionally in the data processing chain
       and with the "point-in-time" enumeration there is semantic describing at
@@ -600,6 +600,19 @@ module ietf-yp-observation {
         target="I-D.ietf-netconf-udp-notif">UDP-based Transport for Configured
         Subscriptions</xref> in their VSR platform.</t>
       </section>
+    </section>
+
+    <section anchor="Operational" title="Operational Considerations">
+      <t>Since the timespan between network state change and subscription
+      establishment as exampled in timeline with "T1" and "T2" in <xref
+      target="timeline_examplen_on-change_fig"/> for "on-change sync on start"
+      subscriptions could be very long when the network node uptime and thus
+      the state change was long time ago and the subscription is establish
+      very recent, a time series database may discard the notification message
+      at ingestion since the "observation-time" timestamp is in the very past
+      and therefore would have potential performance impact on the time series
+      database indexing. This can be circumvent by using the eventTime for
+      indexing or a change to "on-change" subscriptions instead.</t>
     </section>
 
     <section anchor="Security" title="Security Considerations">
