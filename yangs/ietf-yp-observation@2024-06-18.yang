@@ -93,7 +93,7 @@ module ietf-yp-observation {
         }
         enum current-state {
           description "For 'on-change sync on start' subscriptions, the
-            point in time when the state was observed after the YANG-Push
+            point in time when the state was observed after the
             subscription was established. The actual time when the state 
             changed to current is unkown.";
         }
