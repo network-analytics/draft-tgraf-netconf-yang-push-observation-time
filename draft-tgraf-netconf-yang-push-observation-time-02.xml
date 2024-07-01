@@ -69,12 +69,12 @@
       </address>
     </author>
 
-    <date day="30" month="June" year="2024"/>
+    <date day="01" month="July" year="2024"/>
 
     <abstract>
       <t>This document extends YANG-Push Notifications with the YANG objects
-      "observation-time" timestamp and "point-in-time" enumeration for
-      streaming update YANG-Push notifications.</t>
+      observation timestamp and point-in-time for streaming update YANG-Push
+      notifications.</t>
     </abstract>
   </front>
 
@@ -83,14 +83,14 @@
       <t>To correlate network data among different Network Telemetry planes as
       described in Section 3.1 of <xref target="RFC9232"/> or among different
       YANG-Push subscription types defined in Section 3.1 of <xref
-      target="RFC8641"/>, network "observation-time" describes with a
-      timestamp when the state change was observed or when the data was
-      accounted. This is essential for understanding the timely relationship
-      among these different planes and YANG push subscription types.</t>
+      target="RFC8641"/>, observation timestamp describes when the state
+      change was observed or when the data was accounted. This is essential
+      for understanding the timely relationship among these different planes
+      and YANG push subscription types.</t>
 
       <t>With <xref target="I-D.tgraf-netconf-notif-sequencing"/> the delay
       between the YANG Notification export and the arrival at the downstream
-      system storing the data can be measured. With network "observation-time"
+      system storing the data can be measured. With observation timestamp
       described in this document, the delay between the time of the network
       observation and the data export of the YANG push publisher process can
       be measured as well, extending the delay measurement scope from the time
@@ -99,21 +99,21 @@
       <t>When the time bucket length in a time series database and the
       periodical YANG push subscription time is identical, the eventTime of
       the netconf notification message header is used for indexing, there is
-      variable delay between the "observation-time" and the "eventTime", and
-      the "anchor-time" as described in Section 4.2 of <xref
-      target="RFC8641"/> is close to the time bucket boundaries, a time bucket
-      is going to have periodically 0 or 2 measurements indexed instead of 1.
-      Leading to inconsistent accounting errors in the time series database.
-      This problem is resolved by using the observation timestamp instead of
-      the "eventTime" for time series database indexing.</t>
+      variable delay between the observation timestamp and the eventTime, and
+      the anchor-time as described in Section 4.2 of <xref target="RFC8641"/>
+      is close to the time bucket boundaries, a time bucket is going to have
+      periodically 0 or 2 measurements indexed instead of 1. Leading to
+      inconsistent accounting errors in the time series database. This problem
+      is resolved by using the observation timestamp instead of the eventTime
+      for time series database indexing.</t>
 
-      <t>By extending YANG-Push Notifications with the "observation-time" YANG
-      object timestamp and a "point-in-time" enumeration for streaming update
-      YANG-Push notifications it is ensured that the network
-      "observation-time" timestamp is always present with the best available
-      time, can be therefore used unconditionally in the data processing chain
-      and with the "point-in-time" enumeration there is semantic describing at
-      which point in time the "observation-time" was observed.</t>
+      <t>By extending YANG-Push Notifications with the observation timestamp
+      YANG object and a point-in-time enumeration for streaming update
+      YANG-Push notifications it is ensured that the observation timestamp is
+      always present with the best available time, it can be therefore used
+      unconditionally in the data processing chain and with the point-in-time
+      enumeration there is semantic describing at which point in time the
+      observation timestamp was observed.</t>
     </section>
 
     <section title="Terminologies">
@@ -128,7 +128,7 @@
 
       <t>In addition, this document defines the following terms:</t>
 
-      <t>Observation-time: Describes when the metric(s) (reported in YANG-Push
+      <t>Timestamp: Describes when the metric(s) (reported in YANG-Push
       subscriptions) were observed for a given Subscription ID and
       notification message.</t>
 
@@ -163,7 +163,7 @@
 
         <dd>
           <t>The enumeration states at which point in time the value of the
-          observation time was observed. Choices are:</t>
+          observation timestamp was observed. Choices are:</t>
 
           <t>current-accounting states for "periodical" subscriptions, the
           point-in-time where the metrics are being polled and observed</t>
@@ -180,17 +180,17 @@
       </dl>
 
       <t><xref target="timeline_examplen_on-change_fig"/> provides an example
-      timeline of events to describe "observation-time" and "point-in-time"
+      timeline of events to describe observation timestamp and point-in-time
       for "on-change sync on start" subscriptions. At "T2", if the network
       node was capable of storing the initial state change timestamp used for
-      "observation-time" from "T1" prior to the subscription establishment,
-      the timestamp of "T1" is used for "observation-time" and "point-in-time"
-      is set to "state-changed". If the network node is not capable of storing
-      the timestamp prior to the subscription establishment at "T2", the
-      timestamp of "T2" is used in "observation-time" and "point-in-time" is
-      set to "current-state". At "T3" and "T4" the timestamp of "T3"
-      respectively "T4" is used in "observation-time" and "point-in-time" is
-      set to "state-changed".</t>
+      the observation timestamp from "T1" prior to the subscription
+      establishment, the timestamp of "T1" is used for observation timestamp
+      and point-in-time is set to "state-changed". If the network node is not
+      capable of storing the timestamp prior to the subscription establishment
+      at "T2", the timestamp of "T2" is used in observation timestamp
+      and"point-in-time is set to "current-state". At "T3" and "T4" the
+      timestamp of "T3" respectively "T4" is used in observation timestamp and
+      point-in-time is set to "state-changed".</t>
 
       <figure anchor="timeline_examplen_on-change_fig"
               title="Example timeline for       On-Change Sync on Start Subscription">
@@ -218,9 +218,9 @@ Timeline
     "ietf-notification-sequencing:sequenceNumber": 1,
     "ietf-yang-push:push-change-update": {
       "id": 2222,
-      "ietf-yang-push-observation-timestamp:observation-time": \
+      "ietf-yp-observation:timestamp": \
       "2023-03-25T08:30:11.22Z",
-      "ietf-yang-push-observation-timestamp:point-in-time": \
+      "ietf-yp-observation:point-in-time": \
       "state-changed",
       "datastore-contents": {
         "yang-patch": {
@@ -251,12 +251,12 @@ Timeline
       </figure>
 
       <t><xref target="timeline_examplen_periodical_fig"/> provides an example
-      timeline of events to describe "point-in-time" for "periodical"
-      subscriptions. The timestamp of "observation-time" in "T2" is set at the
-      start of the polling of the YANG data store to "T2" and "point-in-time"
-      is set "current-accounting". At "T3" the timestamp of "observation-time"
-      of "T3" is used. At "T4" the timestamp of "observation-time" of "T4" is
-      used.</t>
+      timeline of events to describe point-in-time for "periodical"
+      subscriptions. The timestamp of observation timestamp in "T2" is set at
+      the start of the polling of the YANG data store to "T2" and
+      point-in-time is set "current-accounting". At "T3" the timestamp of
+      observation timestamp of "T3" is used. At "T4" the timestamp of
+      observation timestamp of "T4" is used.</t>
 
       <figure anchor="timeline_examplen_periodical_fig"
               title="Example timeline for       Periodical Subscription">
@@ -292,9 +292,9 @@ Timeline
     "ietf-notification-sequencing:sequenceNumber": 1,
     "ietf-yang-push:push-update": {
       "id": 6666,
-      "ietf-yang-push-observation-timestamp:observation-time": \
+      "ietf-yp-observation:observation-time": \
       "2023-03-25T08:30:11.22Z",
-      "ietf-yang-push-observation-timestamp:point-in-time": \
+      "ietf-yp-observation:point-in-time": \
       "state-changed",
       "datastore-contents": {
         "ietf-interfaces:interfaces": [
@@ -603,16 +603,30 @@ module ietf-yp-observation {
     </section>
 
     <section anchor="Operational" title="Operational Considerations">
-      <t>Since the timespan between network state change and subscription
-      establishment as exampled in timeline with "T1" and "T2" in <xref
-      target="timeline_examplen_on-change_fig"/> for "on-change sync on start"
-      subscriptions could be very long when the network node uptime and thus
-      the state change was long time ago and the subscription is establish
-      very recent, a time series database may discard the notification message
-      at ingestion since the "observation-time" timestamp is in the very past
-      and therefore would have potential performance impact on the time series
-      database indexing. This can be circumvent by using the eventTime for
-      indexing or a change to "on-change" subscriptions instead.</t>
+      <section anchor="Time_Series_Late_Indexing"
+               title="Time Series Late Indexing">
+        <t>Since the timespan between network state change and subscription
+        establishment as exampled in timeline with "T1" and "T2" in <xref
+        target="timeline_examplen_on-change_fig"/> for "on-change sync on
+        start" subscriptions could be very long when the network node uptime
+        and thus the state change was long time ago and the subscription is
+        establish very recent, a time series database may discard the
+        notification message at ingestion since the observation timestamp is
+        in the very past and therefore would have potential performance impact
+        on the time series database indexing. This can be circumvent by using
+        the eventTime for indexing or a change to "on-change" subscriptions
+        instead.</t>
+      </section>
+
+      <section anchor="Use_of_poin-int-time" title="Use of point-in-time">
+        <t>The choices of point-int-time enumeration depend on the type of
+        subscription and wherever the timestamp of the state change can be
+        stored prior to the subscription or not. Therefore for periodical
+        subscription the point-in-time enumeration MUST always be set to
+        "current-accounting". Where on on-change subscription, "current-state"
+        MUST be used when the original timestamp of the state change is
+        unknown and "state-changed" when known.</t>
+      </section>
     </section>
 
     <section anchor="Security" title="Security Considerations">
