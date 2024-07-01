@@ -71,16 +71,15 @@ Table of Contents
      6.1.  6WIND VSR . . . . . . . . . . . . . . . . . . . . . . . .  13
    7.  Operational Considerations  . . . . . . . . . . . . . . . . .  13
      7.1.  Time Series Late Indexing . . . . . . . . . . . . . . . .  13
-     7.2.  Use of point-in-time  . . . . . . . . . . . . . . . . . .  13
    8.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
    9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
-     9.1.  URI . . . . . . . . . . . . . . . . . . . . . . . . . . .  14
+     9.1.  URI . . . . . . . . . . . . . . . . . . . . . . . . . . .  13
      9.2.  YANG module name  . . . . . . . . . . . . . . . . . . . .  14
    10. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  14
    11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
      11.1.  Normative References . . . . . . . . . . . . . . . . . .  14
      11.2.  Informative References . . . . . . . . . . . . . . . . .  15
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  16
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  15
 
 1.  Introduction
 
@@ -106,6 +105,7 @@ Table of Contents
    is variable delay between the observation timestamp and the
    eventTime, and the anchor-time as described in Section 4.2 of
    [RFC8641] is close to the time bucket boundaries, a time bucket is
+   going to have periodically 0 or 2 measurements indexed instead of 1.
 
 
 
@@ -114,7 +114,6 @@ Graf, et al.             Expires 2 January 2025                 [Page 2]
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
-   going to have periodically 0 or 2 measurements indexed instead of 1.
    Leading to inconsistent accounting errors in the time series
    database.  This problem is resolved by using the observation
    timestamp instead of the eventTime for time series database indexing.
@@ -165,6 +164,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
+
 Graf, et al.             Expires 2 January 2025                 [Page 3]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
@@ -181,29 +181,22 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
       value of the observation timestamp was observed.  Choices are:
 
       current-accounting states for "periodical" subscriptions, the
-      point-in-time where the metrics are being polled and observed
+      point-in-time where the metrics are being polled and observed.
+
+      initial-state states for "on-change sync on start" subscriptions,
+      the initial point in time when the subscription was established
+      and the state was observed.
 
       state-changed states for "on-change" and "on-change sync on start"
-      subscriptions, the point in time when the state change wa observed
-      in real-time.
-
-      current-state states for "on-change sync on start" subscriptions,
-      the point in time when the state was observed after the
-      subscription was established.  The actual time when the state
-      changed to current is unkown.
+      subscriptions, the point in time when the state change was
+      observed after the subscription was established.
 
    Figure 1 provides an example timeline of events to describe
    observation timestamp and point-in-time for "on-change sync on start"
-   subscriptions.  At "T2", if the network node was capable of storing
-   the initial state change timestamp used for the observation timestamp
-   from "T1" prior to the subscription establishment, the timestamp of
-   "T1" is used for observation timestamp and point-in-time is set to
-   "state-changed".  If the network node is not capable of storing the
-   timestamp prior to the subscription establishment at "T2", the
-   timestamp of "T2" is used in observation timestamp and"point-in-time
-   is set to "current-state".  At "T3" and "T4" the timestamp of "T3"
-   respectively "T4" is used in observation timestamp and point-in-time
-   is set to "state-changed".
+   subscriptions.  At "T2" the timestamp of "T2" is used in observation
+   timestamp and "point-in-time is set to "initial-state".  At "T3" and
+   "T4" the timestamp of "T3" respectively "T4" is used in observation
+   timestamp and point-in-time is set to "state-changed".
 
  Timeline
  ---------------------------------------------------------------------->
@@ -215,6 +208,13 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
   v                v                  v                v
 
   Figure 1: Example timeline for On-Change Sync on Start Subscription
+
+
+
+
+
+
+
 
 
 
@@ -309,10 +309,10 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
        "ietf-notification-sequencing:sequenceNumber": 1,
        "ietf-yang-push:push-update": {
          "id": 6666,
-         "ietf-yp-observation:observation-time": \
+         "ietf-yp-observation:timestamp": \
          "2023-03-25T08:30:11.22Z",
          "ietf-yp-observation:point-in-time": \
-         "state-changed",
+         "current-accounting",
          "datastore-contents": {
            "ietf-interfaces:interfaces": [
              {
@@ -608,8 +608,8 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
              description "For periodical subscriptions, the point-in-time
              where the metrics are being polled and observed.";
            }
-           enum state-changed {
-             description "For 'on-change' or 'on-change sync on start'
+           enum initial-state {
+             description "For 'on-change sync on start' subscriptions, the
 
 
 
@@ -618,14 +618,13 @@ Graf, et al.             Expires 2 January 2025                [Page 11]
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
-               subscriptions, the point in time when the state change was
-               observed in real-time.";
+               initial point in time when the subscription was established
+               and the state was observed.";
            }
-           enum current-state {
+           enum state-changed {
              description "For 'on-change sync on start' subscriptions, the
-               point in time when the state was observed after the
-               subscription was established. The actual time when the state
-               changed to current is unkown.";
+               point in time when the state change was observed after the
+               subscription was established.";
            }
          }
          description
@@ -669,6 +668,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
+
 Graf, et al.             Expires 2 January 2025                [Page 12]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
@@ -699,16 +699,6 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
    This can be circumvent by using the eventTime for indexing or a
    change to "on-change" subscriptions instead.
 
-7.2.  Use of point-in-time
-
-   The choices of point-int-time enumeration depend on the type of
-   subscription and wherever the timestamp of the state change can be
-   stored prior to the subscription or not.  Therefore for periodical
-   subscription the point-in-time enumeration MUST always be set to
-   "current-accounting".  Where on on-change subscription, "current-
-   state" MUST be used when the original timestamp of the state change
-   is unknown and "state-changed" when known.
-
 8.  Security Considerations
 
    The security considerations for the YANG notifications subscription
@@ -719,16 +709,6 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
    This document describes the URI used for the IETF XML Registry and
    registers a new YANG module name.
-
-
-
-
-
-
-Graf, et al.             Expires 2 January 2025                [Page 13]
-
-Internet-Draft     YANG Notifications Observation Time         July 2024
-
 
 9.1.  URI
 
@@ -742,6 +722,13 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
    XML:  N/A; the requested URI is an XML namespace.
 
    Reference:  RFC5277; RFC-to-be
+
+
+
+Graf, et al.             Expires 2 January 2025                [Page 13]
+
+Internet-Draft     YANG Notifications Observation Time         July 2024
+
 
 9.2.  YANG module name
 
@@ -779,13 +766,6 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
               BCP 215, RFC 8340, DOI 10.17487/RFC8340, March 2018,
               <https://www.rfc-editor.org/info/rfc8340>.
 
-
-
-Graf, et al.             Expires 2 January 2025                [Page 14]
-
-Internet-Draft     YANG Notifications Observation Time         July 2024
-
-
    [RFC8639]  Voit, E., Clemm, A., Gonzalez Prieto, A., Nilsen-Nygaard,
               E., and A. Tripathy, "Subscription to YANG Notifications",
               RFC 8639, DOI 10.17487/RFC8639, September 2019,
@@ -794,6 +774,17 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
    [RFC8641]  Clemm, A. and E. Voit, "Subscription to YANG Notifications
               for Datastore Updates", RFC 8641, DOI 10.17487/RFC8641,
               September 2019, <https://www.rfc-editor.org/info/rfc8641>.
+
+
+
+
+
+
+
+Graf, et al.             Expires 2 January 2025                [Page 14]
+
+Internet-Draft     YANG Notifications Observation Time         July 2024
+
 
    [RFC8792]  Watsen, K., Auerswald, E., Farrel, A., and Q. Wu,
               "Handling Long Lines in Content of Internet-Drafts and
@@ -835,19 +826,21 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
               DOI 10.17487/RFC8259, December 2017,
               <https://www.rfc-editor.org/info/rfc8259>.
 
-
-
-Graf, et al.             Expires 2 January 2025                [Page 15]
-
-Internet-Draft     YANG Notifications Observation Time         July 2024
-
-
    [RFC9232]  Song, H., Qin, F., Martinez-Julia, P., Ciavaglia, L., and
               A. Wang, "Network Telemetry Framework", RFC 9232,
               DOI 10.17487/RFC9232, May 2022,
               <https://www.rfc-editor.org/info/rfc9232>.
 
 Authors' Addresses
+
+
+
+
+
+Graf, et al.             Expires 2 January 2025                [Page 15]
+
+Internet-Draft     YANG Notifications Observation Time         July 2024
+
 
    Thomas Graf
    Swisscom
@@ -867,6 +860,13 @@ Authors' Addresses
    Lyon
    France
    Email: alex.huang-feng@insa-lyon.fr
+
+
+
+
+
+
+
 
 
 

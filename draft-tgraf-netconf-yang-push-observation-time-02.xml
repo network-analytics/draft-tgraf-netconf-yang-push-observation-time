@@ -166,31 +166,25 @@
           observation timestamp was observed. Choices are:</t>
 
           <t>current-accounting states for "periodical" subscriptions, the
-          point-in-time where the metrics are being polled and observed</t>
+          point-in-time where the metrics are being polled and observed.</t>
+
+          <t>initial-state states for "on-change sync on start" subscriptions,
+          the initial point in time when the subscription was established and
+          the state was observed.</t>
 
           <t>state-changed states for "on-change" and "on-change sync on
-          start" subscriptions, the point in time when the state change wa
-          observed in real-time.</t>
-
-          <t>current-state states for "on-change sync on start" subscriptions,
-          the point in time when the state was observed after the subscription
-          was established. The actual time when the state changed to current
-          is unkown.</t>
+          start" subscriptions, the point in time when the state change was
+          observed after the subscription was established.</t>
         </dd>
       </dl>
 
       <t><xref target="timeline_examplen_on-change_fig"/> provides an example
       timeline of events to describe observation timestamp and point-in-time
-      for "on-change sync on start" subscriptions. At "T2", if the network
-      node was capable of storing the initial state change timestamp used for
-      the observation timestamp from "T1" prior to the subscription
-      establishment, the timestamp of "T1" is used for observation timestamp
-      and point-in-time is set to "state-changed". If the network node is not
-      capable of storing the timestamp prior to the subscription establishment
-      at "T2", the timestamp of "T2" is used in observation timestamp
-      and"point-in-time is set to "current-state". At "T3" and "T4" the
-      timestamp of "T3" respectively "T4" is used in observation timestamp and
-      point-in-time is set to "state-changed".</t>
+      for "on-change sync on start" subscriptions. At "T2" the timestamp of
+      "T2" is used in observation timestamp and "point-in-time is set to
+      "initial-state". At "T3" and "T4" the timestamp of "T3" respectively
+      "T4" is used in observation timestamp and point-in-time is set to
+      "state-changed".</t>
 
       <figure anchor="timeline_examplen_on-change_fig"
               title="Example timeline for       On-Change Sync on Start Subscription">
@@ -292,10 +286,10 @@ Timeline
     "ietf-notification-sequencing:sequenceNumber": 1,
     "ietf-yang-push:push-update": {
       "id": 6666,
-      "ietf-yp-observation:observation-time": \
+      "ietf-yp-observation:timestamp": \
       "2023-03-25T08:30:11.22Z",
       "ietf-yp-observation:point-in-time": \
-      "state-changed",
+      "current-accounting",
       "datastore-contents": {
         "ietf-interfaces:interfaces": [
           {
@@ -539,16 +533,15 @@ module ietf-yp-observation {
           description "For periodical subscriptions, the point-in-time
           where the metrics are being polled and observed.";
         }
-        enum state-changed {
-          description "For 'on-change' or 'on-change sync on start' 
-            subscriptions, the point in time when the state change was
-            observed in real-time.";
-        }
-        enum current-state {
+        enum initial-state {
           description "For 'on-change sync on start' subscriptions, the
-            point in time when the state was observed after the
-            subscription was established. The actual time when the state 
-            changed to current is unkown.";
+            initial point in time when the subscription was established
+            and the state was observed.";
+        }
+        enum state-changed {
+          description "For 'on-change sync on start' subscriptions, the
+            point in time when the state change was observed after the
+            subscription was established.";
         }
       }
       description
@@ -616,16 +609,6 @@ module ietf-yp-observation {
         on the time series database indexing. This can be circumvent by using
         the eventTime for indexing or a change to "on-change" subscriptions
         instead.</t>
-      </section>
-
-      <section anchor="Use_of_poin-int-time" title="Use of point-in-time">
-        <t>The choices of point-int-time enumeration depend on the type of
-        subscription and wherever the timestamp of the state change can be
-        stored prior to the subscription or not. Therefore for periodical
-        subscription the point-in-time enumeration MUST always be set to
-        "current-accounting". Where on on-change subscription, "current-state"
-        MUST be used when the original timestamp of the state change is
-        unknown and "state-changed" when known.</t>
       </section>
     </section>
 
