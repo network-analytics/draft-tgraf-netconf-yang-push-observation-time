@@ -5,10 +5,10 @@
 Network Working Group                                            T. Graf
 Internet-Draft                                                  Swisscom
 Intended status: Standards Track                               B. Claise
-Expires: 2 January 2025                                           Huawei
+Expires: 3 January 2025                                           Huawei
                                                            A. Huang Feng
                                                                INSA-Lyon
-                                                             1 July 2024
+                                                             2 July 2024
 
 
       Support of Observation Timestamp in YANG-Push Notifications
@@ -35,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 2 January 2025.
+   This Internet-Draft will expire on 3 January 2025.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Graf, et al.             Expires 2 January 2025                 [Page 1]
+Graf, et al.             Expires 3 January 2025                 [Page 1]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Graf, et al.             Expires 2 January 2025                 [Page 2]
+Graf, et al.             Expires 3 January 2025                 [Page 2]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -165,7 +165,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                 [Page 3]
+Graf, et al.             Expires 3 January 2025                 [Page 3]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -193,18 +193,20 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
    Figure 1 provides an example timeline of events to describe
    observation timestamp and point-in-time for "on-change sync on start"
-   subscriptions.  At "T2" the timestamp of "T2" is used in observation
-   timestamp and "point-in-time is set to "initial-state".  At "T3" and
-   "T4" the timestamp of "T3" respectively "T4" is used in observation
-   timestamp and point-in-time is set to "state-changed".
+   subscriptions.  At "T2" when the "on-change sync on start"
+   subscription is established, the timestamp of "T2" is used in
+   observation timestamp and "point-in-time" is set to "initial-state".
+   At "T3" and "T4" the timestamp of "T3" respectively "T4" is used in
+   observation timestamp and point-in-time is set to "state-changed".
 
  Timeline
  ---------------------------------------------------------------------->
   | (T1) Interface | (T2) YANG-Push   | (T3) Interface | (T4) Interface
   | state changed  | "on-change sync  | state changed  | state changed
-  | to "Up".       | on start" for    | to "Down".     | to "Up".
-  |                | interface state. |                |
-  |                |                  |                |
+  | to "Up".       | on start"        | to "Down".     | to "Up".
+  |                | subscription for |                |
+  |                | interface state  |                |
+  |                | is established.  |                |
   v                v                  v                v
 
   Figure 1: Example timeline for On-Change Sync on Start Subscription
@@ -219,9 +221,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-
-
-Graf, et al.             Expires 2 January 2025                 [Page 4]
+Graf, et al.             Expires 3 January 2025                 [Page 4]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -277,7 +277,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                 [Page 5]
+Graf, et al.             Expires 3 January 2025                 [Page 5]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -286,15 +286,15 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
  ---------------------------------------------------------------------->
   | (T1) YANG-Push | (T2) YANG-Push | (T3) YANG-Push | (T4) YANG-Push
   | "periodical"   | "periodical"   | "periodical"   | "periodical"
-  | for interface  | current        | current        | current
-  | counters is    | accounting     | accounting.    | accounting.
+  | subscription   | current        | current        | current
+  | for interface  | accounting     | accounting.    | accounting.
+  | counter is     |                |                |
   | established    |                |                |
-  |                |                |                |
   v                v                v                v
 
          Figure 3: Example timeline for Periodical Subscription
 
-   Figure 2 provides an example of a JSON encoded, [RFC8259], "push-
+   Figure 4 provides an example of a JSON encoded, [RFC8259], "push-
    change-update" notification message over HTTPS-based
    [I-D.ietf-netconf-https-notif] or UDP-based
    [I-D.ietf-netconf-udp-notif] transport with
@@ -333,7 +333,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                 [Page 6]
+Graf, et al.             Expires 3 January 2025                 [Page 6]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -389,7 +389,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                 [Page 7]
+Graf, et al.             Expires 3 January 2025                 [Page 7]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -445,7 +445,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                 [Page 8]
+Graf, et al.             Expires 3 January 2025                 [Page 8]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -501,7 +501,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                 [Page 9]
+Graf, et al.             Expires 3 January 2025                 [Page 9]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -557,7 +557,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                [Page 10]
+Graf, et al.             Expires 3 January 2025                [Page 10]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -613,7 +613,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                [Page 11]
+Graf, et al.             Expires 3 January 2025                [Page 11]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -669,7 +669,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                [Page 12]
+Graf, et al.             Expires 3 January 2025                [Page 12]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -725,7 +725,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                [Page 13]
+Graf, et al.             Expires 3 January 2025                [Page 13]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -781,7 +781,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                [Page 14]
+Graf, et al.             Expires 3 January 2025                [Page 14]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -837,7 +837,7 @@ Authors' Addresses
 
 
 
-Graf, et al.             Expires 2 January 2025                [Page 15]
+Graf, et al.             Expires 3 January 2025                [Page 15]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -893,4 +893,4 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 2 January 2025                [Page 16]
+Graf, et al.             Expires 3 January 2025                [Page 16]

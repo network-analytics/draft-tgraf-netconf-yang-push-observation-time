@@ -69,7 +69,7 @@
       </address>
     </author>
 
-    <date day="01" month="July" year="2024"/>
+    <date day="02" month="July" year="2024"/>
 
     <abstract>
       <t>This document extends YANG-Push Notifications with the YANG objects
@@ -180,22 +180,24 @@
 
       <t><xref target="timeline_examplen_on-change_fig"/> provides an example
       timeline of events to describe observation timestamp and point-in-time
-      for "on-change sync on start" subscriptions. At "T2" the timestamp of
-      "T2" is used in observation timestamp and "point-in-time is set to
+      for "on-change sync on start" subscriptions. At "T2" when the "on-change
+      sync on start" subscription is established, the timestamp of "T2" is
+      used in observation timestamp and "point-in-time" is set to
       "initial-state". At "T3" and "T4" the timestamp of "T3" respectively
       "T4" is used in observation timestamp and point-in-time is set to
       "state-changed".</t>
 
       <figure anchor="timeline_examplen_on-change_fig"
-              title="Example timeline for       On-Change Sync on Start Subscription">
+              title="Example timeline for On-Change Sync on Start Subscription">
         <artwork><![CDATA[
 Timeline
 ---------------------------------------------------------------------->
  | (T1) Interface | (T2) YANG-Push   | (T3) Interface | (T4) Interface
  | state changed  | "on-change sync  | state changed  | state changed
- | to "Up".       | on start" for    | to "Down".     | to "Up".
- |                | interface state. |                |
- |                |                  |                |
+ | to "Up".       | on start"        | to "Down".     | to "Up".
+ |                | subscription for |                |
+ |                | interface state  |                |
+ |                | is established.  |                |
  v                v                  v                v
         ]]></artwork>
       </figure>
@@ -253,23 +255,23 @@ Timeline
       observation timestamp of "T4" is used.</t>
 
       <figure anchor="timeline_examplen_periodical_fig"
-              title="Example timeline for       Periodical Subscription">
+              title="Example timeline for Periodical Subscription">
         <artwork><![CDATA[
 Timeline
 ---------------------------------------------------------------------->
  | (T1) YANG-Push | (T2) YANG-Push | (T3) YANG-Push | (T4) YANG-Push
  | "periodical"   | "periodical"   | "periodical"   | "periodical"
- | for interface  | current        | current        | current
- | counters is    | accounting     | accounting.    | accounting.
+ | subscription   | current        | current        | current
+ | for interface  | accounting     | accounting.    | accounting.
+ | counter is     |                |                |
  | established    |                |                |
- |                |                |                |
  v                v                v                v
         ]]></artwork>
       </figure>
 
-      <t><xref target="push-change-update_example_json_fig"/> provides an
-      example of a JSON encoded, <xref target="RFC8259"/>,
-      "push-change-update" notification message over HTTPS-based <xref
+      <t><xref target="push-update_example_json_fig"/> provides an example of
+      a JSON encoded, <xref target="RFC8259"/>, "push-change-update"
+      notification message over HTTPS-based <xref
       target="I-D.ietf-netconf-https-notif"/> or UDP-based <xref
       target="I-D.ietf-netconf-udp-notif"/> transport with <xref
       target="I-D.tgraf-netconf-notif-sequencing"/> as extension.</t>
