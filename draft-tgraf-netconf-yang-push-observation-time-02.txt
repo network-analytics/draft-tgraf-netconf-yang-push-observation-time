@@ -5,10 +5,10 @@
 Network Working Group                                            T. Graf
 Internet-Draft                                                  Swisscom
 Intended status: Standards Track                               B. Claise
-Expires: 3 January 2025                                           Huawei
+Expires: 4 January 2025                                           Huawei
                                                            A. Huang Feng
                                                                INSA-Lyon
-                                                             2 July 2024
+                                                             3 July 2024
 
 
       Support of Observation Timestamp in YANG-Push Notifications
@@ -35,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 January 2025.
+   This Internet-Draft will expire on 4 January 2025.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Graf, et al.             Expires 3 January 2025                 [Page 1]
+Graf, et al.             Expires 4 January 2025                 [Page 1]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Graf, et al.             Expires 3 January 2025                 [Page 2]
+Graf, et al.             Expires 4 January 2025                 [Page 2]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -165,7 +165,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                 [Page 3]
+Graf, et al.             Expires 4 January 2025                 [Page 3]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -221,7 +221,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                 [Page 4]
+Graf, et al.             Expires 4 January 2025                 [Page 4]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -277,7 +277,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                 [Page 5]
+Graf, et al.             Expires 4 January 2025                 [Page 5]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -333,7 +333,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                 [Page 6]
+Graf, et al.             Expires 4 January 2025                 [Page 6]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -389,7 +389,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                 [Page 7]
+Graf, et al.             Expires 4 January 2025                 [Page 7]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -445,7 +445,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                 [Page 8]
+Graf, et al.             Expires 4 January 2025                 [Page 8]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -501,7 +501,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                 [Page 9]
+Graf, et al.             Expires 4 January 2025                 [Page 9]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -557,7 +557,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                [Page 10]
+Graf, et al.             Expires 4 January 2025                [Page 10]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -613,7 +613,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                [Page 11]
+Graf, et al.             Expires 4 January 2025                [Page 11]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -669,7 +669,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                [Page 12]
+Graf, et al.             Expires 4 January 2025                [Page 12]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -725,7 +725,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                [Page 13]
+Graf, et al.             Expires 4 January 2025                [Page 13]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -781,7 +781,7 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                [Page 14]
+Graf, et al.             Expires 4 January 2025                [Page 14]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -817,9 +817,9 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
               Graf, T., Quilbeuf, J., and A. H. Feng, "Support of
               Hostname and Sequencing in YANG Notifications", Work in
               Progress, Internet-Draft, draft-tgraf-netconf-notif-
-              sequencing-06, 30 June 2024,
-              <https://datatracker.ietf.org/api/v1/doc/document/draft-
-              tgraf-netconf-notif-sequencing/>.
+              sequencing-06, 29 June 2024,
+              <https://datatracker.ietf.org/doc/html/draft-tgraf-
+              netconf-notif-sequencing-06>.
 
    [RFC8259]  Bray, T., Ed., "The JavaScript Object Notation (JSON) Data
               Interchange Format", STD 90, RFC 8259,
@@ -837,7 +837,7 @@ Authors' Addresses
 
 
 
-Graf, et al.             Expires 3 January 2025                [Page 15]
+Graf, et al.             Expires 4 January 2025                [Page 15]
 
 Internet-Draft     YANG Notifications Observation Time         July 2024
 
@@ -893,4 +893,4 @@ Internet-Draft     YANG Notifications Observation Time         July 2024
 
 
 
-Graf, et al.             Expires 3 January 2025                [Page 16]
+Graf, et al.             Expires 4 January 2025                [Page 16]
