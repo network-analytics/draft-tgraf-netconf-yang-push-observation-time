@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?rfc toc="yes"?>
+<?rfc tocompact="yes"?>
+<?rfc tocdepth="2"?>
+<?rfc tocindent="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<?rfc compact="yes"?>
+<?rfc subcompact="no"?>
+<rfc category="std"
+     docName="draft-tgraf-netconf-yang-push-observation-time-03"
+     ipr="trust200902">
+  <front>
+    <title abbrev="YANG Notifications Observation Time">Support of Observation
+    Timestamp in YANG-Push Notifications</title>
+
+    <author fullname="Thomas Graf" initials="T" surname="Graf">
+      <organization>Swisscom</organization>
+
+      <address>
+        <postal>
+          <street>Binzring 17</street>
+
+          <city>Zurich</city>
+
+          <code>8045</code>
+
+          <country>Switzerland</country>
+        </postal>
+
+        <email>thomas.graf@swisscom.com</email>
+      </address>
+    </author>
+
+    <author fullname="Benoit Claise" initials="B" surname="Claise">
+      <organization>Huawei</organization>
+
+      <address>
+        <email>benoit.claise@huawei.com</email>
+      </address>
+    </author>
+
+    <author fullname="Alex Huang Feng" initials="A." surname="Huang Feng">
+      <organization>INSA-Lyon</organization>
+
+      <address>
+        <postal>
+          <street/>
+
+          <city>Lyon</city>
+
+          <region/>
+
+          <code/>
+
+          <country>France</country>
+        </postal>
+
+        <phone/>
+
+        <facsimile/>
+
+        <email>alex.huang-feng@insa-lyon.fr</email>
+
+        <uri/>
+      </address>
+    </author>
+
+    <date day="14" month="December" year="2024"/>
+
+    <abstract>
+      <t>This document extends YANG-Push Notifications with the YANG objects
+      observation timestamp and point-in-time for streaming update YANG-Push
+      notifications.</t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section anchor="Introduction" title="Introduction">
+      <t>To correlate network data among different Network Telemetry planes as
+      described in Section 3.1 of <xref target="RFC9232"/> or among different
+      YANG-Push subscription types defined in Section 3.1 of <xref
+      target="RFC8641"/>, observation timestamp describes when the state
+      change was observed or when the data was accounted. This is essential
+      for understanding the timely relationship among these different planes
+      and YANG push subscription types.</t>
+
+      <t>With <xref target="I-D.tgraf-netconf-notif-sequencing"/> the delay
+      between the YANG Notification export and the arrival at the downstream
+      system storing the data can be measured. With observation timestamp
+      described in this document, the delay between the time of the network
+      observation and the data export of the YANG push publisher process can
+      be measured as well, extending the delay measurement scope from the time
+      the network observation and storing the data.</t>
+
+      <t>When the time bucket length in a time series database and the
+      periodical YANG push subscription time is identical, the eventTime of
+      the netconf notification message header is used for indexing, there is
+      variable delay between the observation timestamp and the eventTime, and
+      the anchor-time as described in Section 4.2 of <xref target="RFC8641"/>
+      is close to the time bucket boundaries, a time bucket is going to have
+      periodically 0 or 2 measurements indexed instead of 1. Leading to
+      inconsistent accounting errors in the time series database. This problem
+      is resolved by using the observation timestamp instead of the eventTime
+      for time series database indexing.</t>
+
+      <t>By extending YANG-Push Notifications with the observation timestamp
+      YANG object and a point-in-time enumeration for streaming update
+      YANG-Push notifications it is ensured that the observation timestamp is
+      always present with the best available time, it can be therefore used
+      unconditionally in the data processing chain and with the point-in-time
+      enumeration there is semantic describing at which point in time the
+      observation timestamp was observed.</t>
+    </section>
+
+    <section title="Terminologies">
+      <t>The following terms are defined in <xref target="RFC8639"/> and are
+      not redefined here:</t>
+
+      <t>Publisher</t>
+
+      <t>Receiver</t>
+
+      <t>Subscription</t>
+
+      <t>In addition, this document defines the following terms:</t>
+
+      <t>Timestamp: Describes when the metric(s) (reported in YANG-Push
+      subscriptions) were observed for a given Subscription ID and
+      notification message.</t>
+
+      <t>Point-in-time: Describes at which point in time the metric(s)
+      reported in YANG-Push subscriptions) were observed for a given
+      Subscription ID and notification message.</t>
+    </section>
+
+    <section anchor="Streaming-Update"
+             title="Extend the Streaming Update Notifications">
+      <t>Besides the Subscription ID as described in Section 3.7 of <xref
+      target="RFC8641"/>, the following network observation time metadata
+      objects are part of "push-update" and "push-change-update"
+      notifications.</t>
+
+      <dl>
+        <dt>timestamp:</dt>
+
+        <dd>
+          <t>States the measurement observation time for the "push-update"
+          notification in a "periodical" and for the "push-change-update"
+          notification in a "on-change" subscription.</t>
+
+          <t>By comparing the observation timestamp of two "push-update"
+          notifications in a periodical subscription, the collector can deduce
+          the actual cadence of the measurements, and compare it with the
+          subscription configuration. In case of an "on-change" subscription
+          it states the time when the network state change was observed.</t>
+        </dd>
+
+        <dt>point-in-time:</dt>
+
+        <dd>
+          <t>The enumeration states at which point in time the value of the
+          observation timestamp was observed. Choices are:</t>
+
+          <t>current-accounting states for "periodical" subscriptions, the
+          point-in-time where the metrics are being polled and observed.</t>
+
+          <t>initial-state states for "on-change sync on start" subscriptions,
+          the initial point in time when the subscription was established and
+          the state was observed.</t>
+
+          <t>state-changed states for "on-change" and "on-change sync on
+          start" subscriptions, the point in time when the state change was
+          observed after the subscription was established.</t>
+        </dd>
+      </dl>
+
+      <t><xref target="timeline_examplen_on-change_fig"/> provides an example
+      timeline of events to describe observation timestamp and point-in-time
+      for "on-change sync on start" subscriptions. At "T2" when the "on-change
+      sync on start" subscription is established, the timestamp of "T2" is
+      used in observation timestamp and "point-in-time" is set to
+      "initial-state". At "T3" and "T4" the timestamp of "T3" respectively
+      "T4" is used in observation timestamp and point-in-time is set to
+      "state-changed".</t>
+
+      <figure anchor="timeline_examplen_on-change_fig"
+              title="Example timeline for On-Change Sync on Start Subscription">
+        <artwork><![CDATA[
+Timeline
+---------------------------------------------------------------------->
+ | (T1) Interface | (T2) YANG-Push   | (T3) Interface | (T4) Interface
+ | state changed  | "on-change sync  | state changed  | state changed
+ | to "Up".       | on start"        | to "Down".     | to "Up".
+ |                | subscription for |                |
+ |                | interface state  |                |
+ |                | is established.  |                |
+ v                v                  v                v
+        ]]></artwork>
+      </figure>
+
+      <figure anchor="push-change-update_example_json_fig"
+              title="JSON Push Example for a push-change-update notification message">
+        <artwork><![CDATA[
+========== NOTE: '\' line wrapping per RFC 8792) ===========
+
+{
+  "ietf-notification:notification": {
+    "eventTime": "2023-03-25T08:30:11.22Z",
+    "ietf-notification-sequencing:sysName": "example-router",
+    "ietf-notification-sequencing:sequenceNumber": 1,
+    "ietf-yang-push:push-change-update": {
+      "id": 2222,
+      "ietf-yp-observation:timestamp": \
+      "2023-03-25T08:30:11.22Z",
+      "ietf-yp-observation:point-in-time": \
+      "state-changed",
+      "datastore-contents": {
+        "yang-patch": {
+          "patch-id": "patch_54",
+          "comment": "Changing encoding to JSON and increasing \
+          the period to 10 minutes",
+          "edit": [
+            {
+              "edit-id": "id_change_1",
+              "operation": "merge",
+              "target": "/ietf-subscribed-notifications\:subs\
+              criptions/subscription[id=2222]",
+              "value": {
+                "ietf-subscribed-notifications:encoding": \
+                "ietf-subscribed-notifications:encode-json",
+                "ietf-yang-push:periodic": {
+                  "period": 60000
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}    
+           ]]></artwork>
+      </figure>
+
+      <t><xref target="timeline_examplen_periodical_fig"/> provides an example
+      timeline of events to describe point-in-time for "periodical"
+      subscriptions. The timestamp of observation timestamp in "T2" is set at
+      the start of the polling of the YANG data store to "T2" and
+      point-in-time is set "current-accounting". At "T3" the timestamp of
+      observation timestamp of "T3" is used. At "T4" the timestamp of
+      observation timestamp of "T4" is used.</t>
+
+      <figure anchor="timeline_examplen_periodical_fig"
+              title="Example timeline for Periodical Subscription">
+        <artwork><![CDATA[
+Timeline
+---------------------------------------------------------------------->
+ | (T1) YANG-Push | (T2) YANG-Push | (T3) YANG-Push | (T4) YANG-Push
+ | "periodical"   | "periodical"   | "periodical"   | "periodical"
+ | subscription   | current        | current        | current
+ | for interface  | accounting     | accounting.    | accounting.
+ | counter is     |                |                |
+ | established    |                |                |
+ v                v                v                v
+        ]]></artwork>
+      </figure>
+
+      <t><xref target="push-update_example_json_fig"/> provides an example of
+      a JSON encoded, <xref target="RFC8259"/>, "push-change-update"
+      notification message over HTTPS-based <xref
+      target="I-D.ietf-netconf-https-notif"/> or UDP-based <xref
+      target="I-D.ietf-netconf-udp-notif"/> transport with <xref
+      target="I-D.tgraf-netconf-notif-sequencing"/> as extension.</t>
+
+      <figure anchor="push-update_example_json_fig"
+              title="JSON Push Example for a push-update notification message">
+        <artwork><![CDATA[
+========== NOTE: '\' line wrapping per RFC 8792) ===========
+
+{
+  "ietf-notification:notification": {
+    "eventTime": "2023-03-25T08:30:11.22Z",
+    "ietf-notification-sequencing:sysName": "example-router",
+    "ietf-notification-sequencing:sequenceNumber": 1,
+    "ietf-yang-push:push-update": {
+      "id": 6666,
+      "ietf-yp-observation:timestamp": \
+      "2023-03-25T08:30:11.22Z",
+      "ietf-yp-observation:point-in-time": \
+      "current-accounting",
+      "datastore-contents": {
+        "ietf-interfaces:interfaces": [
+          {
+            "interface": {
+              "name": "eth0",
+              "type": "iana-if-type:ethernetCsmacd",
+              "oper-status": "up",
+              "mtu": 1500
+            }
+          }
+        ]
+      }
+    }
+  }
+}     
+           ]]></artwork>
+      </figure>
+    </section>
+
+    <section title="YANG-Push capabilities">
+      <t>YANG-related system capabilities can be discovered by subscribing to
+      the datastore defined in <xref target="RFC9196"/>. This document
+      augments the "ietf-notification-capabilities" defined in <xref
+      section="5" target="RFC9196"/> so that the YANG-Push receiver can learn
+      the capabilities defined in this documents through the datastore.</t>
+
+      <t>The definition of this YANG augmentation is specified in <xref
+      target="YANG-push-observation-module"/>.</t>
+    </section>
+
+    <section anchor="YANG-push-observation-module"
+             title="The &quot;ietf-yp-observation&quot; YANG Module">
+      <t>This YANG module augments the "ietf-yang-push" module with the
+      observation timestamp and point-in-time in the "push-update" and
+      "push-change-update" streaming update notifications.</t>
+
+      <section anchor="YANG-observation-model" title="Data Model Overview">
+        <section anchor="Tree View" title="Tree View">
+          <t>This "ietf-yp-observation" YANG module augments the
+          "ietf-yang-push" YANG module specified in Section 5 of <xref
+          target="RFC8641"/> adding the "timestamp" and the "point-in-time"
+          leaves and augments "ietf-notification-capabilities" defined in
+          <xref target="RFC9196"/> to add a system level capability.</t>
+
+          <figure>
+            <artwork><![CDATA[
+module: ietf-yp-observation
+
+  augment /yp:push-update:
+    +--ro timestamp?          yang:date-and-time
+    +--ro point-in-time?      enumeration
+  augment /yp:push-change-update:
+    +--ro timestamp?          yang:date-and-time
+    +--ro point-in-time?      enumeration
+  augment /sysc:system-capabilities/notc:subscription-capabilities:
+    +--ro yang-push-observation-supported?
+            inotifseq:notification-support
+            {yang-push-observation-timestamp}?
+]]></artwork>
+          </figure>
+        </section>
+
+        <section anchor="Full Tree View" title="Full Tree View">
+          <t>The following YANG tree diagram <xref target="RFC8340"/> shows
+          the complete notification defined in the "ietf-yang-push"
+          module:</t>
+
+          <figure>
+            <artwork><![CDATA[
+module: ietf-yang-push
+
+  rpcs:
+    +---x resync-subscription {on-change}?
+       +---w input
+          +---w id    sn:subscription-id
+
+  notifications:
+    +---n push-update
+    |  +--ro id?                      sn:subscription-id
+    |  +--ro datastore-contents?      <anydata>
+    |  +--ro incomplete-update?       empty
+    |  +--ro ypot:timestamp?          yang:date-and-time
+    |  +--ro ypot:point-in-time?      enumeration
+    +---n push-change-update {on-change}?
+       +--ro id?                      sn:subscription-id
+       +--ro datastore-changes
+       +--ro incomplete-update?       empty
+       +--ro ypot:timestamp?          yang:date-and-time
+       +--ro ypot:point-in-time?      enumeration
+]]></artwork>
+          </figure>
+
+          <t>The following YANG tree diagram <xref target="RFC8340"/> shows
+          the complete "ietf-system-capabilities" module with the
+          augmentations defined in "ietf-yp-observation" module:</t>
+
+          <figure>
+            <artwork><![CDATA[
+module: ietf-system-capabilities
+  +--ro system-capabilities
+     +--ro datastore-capabilities* [datastore]
+     |  +--ro datastore
+     |  |       -> /yanglib:yang-library/datastore/name
+     |  +--ro per-node-capabilities* []
+     |     +--ro (node-selection)?
+     |     |  +--:(node-selector)
+     |     |     +--ro node-selector?
+     |     |             nacm:node-instance-identifier
+     |     +--ro notc:subscription-capabilities
+     |        +--ro notc:max-nodes-per-update?               uint32
+     |        +--ro notc:periodic-notifications-supported?
+     |        |       notification-support
+     |        +--ro (notc:update-period)?
+     |        |  +--:(notc:minimum-update-period)
+     |        |  |  +--ro notc:minimum-update-period?        uint32
+     |        |  +--:(notc:supported-update-period)
+     |        |     +--ro notc:supported-update-period*      uint32
+     |        +--ro notc:on-change-supported?
+     |        |       notification-support {yp:on-change}?
+     |        +--ro notc:minimum-dampening-period?           uint32
+     |        |       {yp:on-change}?
+     |        +--ro notc:supported-excluded-change-type*     union
+     |                {yp:on-change}?
+     +--ro notc:subscription-capabilities
+        +--ro notc:max-nodes-per-update?               uint32
+        +--ro notc:periodic-notifications-supported?
+        |       notification-support
+        +--ro (notc:update-period)?
+        |  +--:(notc:minimum-update-period)
+        |  |  +--ro notc:minimum-update-period?        uint32
+        |  +--:(notc:supported-update-period)
+        |     +--ro notc:supported-update-period*      uint32
+        +--ro notc:on-change-supported?
+        |       notification-support {yp:on-change}?
+        +--ro notc:minimum-dampening-period?           uint32
+        |       {yp:on-change}?
+        +--ro notc:supported-excluded-change-type*     union
+        |       {yp:on-change}?
+        +--ro inotifseq:sysname-sequence-supported?
+        |       notification-support {sysname-sequence}?
+        +--ro ypot:yang-push-observation-supported?
+                inotifseq:notification-support
+                {yang-push-observation-timestamp}?
+]]></artwork>
+          </figure>
+        </section>
+      </section>
+
+      <section anchor="YANG-observation-module" title="YANG Module">
+        <t>The YANG module has one leave augmenting the model of <xref
+        target="RFC8639">Subscription to YANG Notifications</xref>.</t>
+
+        <t><figure>
+            <artwork><![CDATA[
+<CODE BEGINS> file "ietf-yp-observation@2024-06-18.yang"
+module ietf-yp-observation {
+  yang-version 1.1;
+  namespace
+    "urn:ietf:params:xml:ns:yang:ietf-yp-observation";
+  prefix ypot;
+  import ietf-yang-types {
+    prefix yang;
+    reference
+      "RFC 6991: Common YANG Data Types";
+  }
+  import ietf-yang-push {
+    prefix yp;
+    reference
+      "RFC 8641: Subscription to YANG Notifications for Datastore Updates";
+  }
+  import ietf-system-capabilities {
+    prefix sysc;
+    reference
+      "RFC 9196: YANG Modules Describing Capabilities for
+       Systems and Datastore Update Notifications";
+  }
+  import ietf-notification-capabilities {
+    prefix notc;
+    reference
+      "RFC 9196: YANG Modules Describing Capabilities for
+       Systems and Datastore Update Notifications";
+  }
+  import ietf-notification-sequencing {
+    prefix inotifseq;
+    reference
+      "draft-tgraf-netconf-notif-sequencing-05: YANG Notifications
+      Sequencing";
+  }
+  organization "IETF NETCONF (Network Configuration) Working Group";
+  contact
+    "WG Web:   <http:/tools.ietf.org/wg/netconf/>
+     WG List:  <mailto:netconf@ietf.org>
+
+     Authors:  Thomas Graf
+               <mailto:thomas.graf@swisscom.com>
+               Benoit Claise
+               <mailto:benoit.claise@huawei.com>
+               Alex Huang Feng
+               <mailto:alex.huang-feng@insa-lyon.fr>";
+
+  description
+    "Defines YANG-Push event notification header with the observation
+    time in streaming update notifications.
+
+    Copyright (c) 2024 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, is permitted pursuant to, and subject to the license
+    terms contained in, the Revised BSD License set forth in Section
+    4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+    (https://trustee.ietf.org/license-info).
+
+    This version of this YANG module is part of RFC XXXX; see the RFC
+    itself for full legal notices.";
+
+  revision 2024-06-18 {
+    description
+      "First revision";
+    reference
+      "RFC XXXX: Support of YANG-Push Notifications Observation Time";
+  }
+
+  feature yang-push-observation-timestamp {
+    description
+      "This feature indicates the YANG-push Notifications support
+      the observation timestamps in streaming update notifications.";
+  }
+
+  grouping yang-push-observation {
+    description
+      "This grouping adds the observation timestamp for the observed metrics.";
+    leaf timestamp {
+      type yang:date-and-time;
+      description
+        "This is the time when metrics were observed.";
+    }
+    leaf point-in-time {
+      type enumeration {
+        enum current-accounting {
+          description "For periodical subscriptions, the point-in-time
+          where the metrics are being polled and observed.";
+        }
+        enum initial-state {
+          description "For 'on-change sync on start' subscriptions, the
+            initial point in time when the subscription was established
+            and the state was observed.";
+        }
+        enum state-changed {
+          description "For 'on-change sync on start' subscriptions, the
+            point in time when the state change was observed after the
+            subscription was established.";
+        }
+      }
+      description
+      "This describes at which point in time the metrics were observed";
+    }
+  }
+
+  // Event notifications
+  augment "/yp:push-update" {
+    description
+      "This augmentation adds the observation timestamp of the accounted metrics
+      in the push-update notification.";
+    uses ypot:yang-push-observation;
+  }
+
+  augment "/yp:push-change-update" {
+    description
+      "This augmentation adds the observation timestamp of the event 
+      in the push-change-update notification.";
+      uses ypot:yang-push-observation;
+  }
+
+  // Event capabilities
+  augment "/sysc:system-capabilities/notc:subscription-capabilities" {
+    description
+      "Add system level capabilities";
+    leaf yang-push-observation-supported {
+      if-feature "yang-push-observation-timestamp";
+      type inotifseq:notification-support;
+      description
+        "Specifies whether the publisher supports exporting
+        observation-timestamp and point-in-time in notifications.";
+      reference
+        "RFC XXXX: YANG Notifications Observation Time";
+    }
+  }
+}
+<CODE ENDS>]]></artwork>
+          </figure></t>
+      </section>
+    </section>
+
+    <section anchor="Implementation" title="Implementation Status">
+      <t>Note to the RFC-Editor: Please remove this section before
+      publishing.</t>
+
+      <section anchor="Huawei" title="Huawei VRP">
+        <t>Huawei implemented in push-update and push-change-update notifications
+		the timestamp and point-in-time extension as described in 
+		<xref target="Streaming-Update"/> for a YANG-Push publisher on
+		<xref target="I-D.ietf-netconf-udp-notif">UDP-based Transport
+		for Configured Subscriptions</xref> in their VRP platform.</t>
+      </section>
+
+      <section anchor="SIXWIND" title="6WIND VSR">
+        <t>6WIND implemented in push-update and push-change-update notifications
+		the timestamp and point-in-time extension as described in 
+		<xref target="Streaming-Update"/> for a YANG-Push publisher on
+		<xref target="I-D.ietf-netconf-udp-notif">UDP-based Transport
+		for Configured Subscriptions</xref> in their VSR platform.</t>
+      </section>
+
+      <section anchor="Cisco" title="Cisco IOS XR">
+        <t>Cisco implemented in push-update and push-change-update notifications
+		the timestamp and point-in-time extension as described in 
+		<xref target="Streaming-Update"/> for a YANG-Push publisher on
+		<xref target="I-D.ietf-netconf-udp-notif">UDP-based Transport for
+		Configured Subscriptions</xref> in their IOS XR platform.</t>
+      </section>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+      <t>The security considerations for the YANG notifications subscription
+      mechanism are described in <xref target="RFC8641"/>. This document adds
+      no additional security considerations.</t>
+    </section>
+
+    <section anchor="IANA_Considerations" title="IANA Considerations">
+      <t>This document describes the URI used for the IETF XML Registry and
+      registers a new YANG module name.</t>
+
+      <section anchor="IANA_URI" title="URI">
+        <t>IANA is requested to add this document as a reference in the
+        following URI in the IETF XML Registry <xref target="RFC3688"/>.</t>
+
+        <dl>
+          <dt>URI:</dt>
+
+          <dd>urn:ietf:params:xml:ns:yang:ietf-yp-observation</dd>
+
+          <dt>Registrant Contact:</dt>
+
+          <dd>The IESG.</dd>
+
+          <dt>XML:</dt>
+
+          <dd>N/A; the requested URI is an XML namespace.</dd>
+
+          <dt>Reference:</dt>
+
+          <dd>RFC5277; RFC-to-be</dd>
+        </dl>
+      </section>
+
+      <section anchor="IANA_YANG_module_name" title="YANG module name">
+        <t>This document registers the following YANG module in the YANG
+        Module Names Registry <xref target="RFC6020"/>, within the "YANG
+        Parameters" registry:</t>
+
+        <dl>
+          <dt>name:</dt>
+
+          <dd>ietf-yp-observation</dd>
+
+          <dt>namespace:</dt>
+
+          <dd>urn:ietf:params:xml:ns:yang:ietf-yp-observation</dd>
+
+          <dt>prefix:</dt>
+
+          <dd>ypot</dd>
+
+          <dt>Reference:</dt>
+
+          <dd>RFC-to-be</dd>
+        </dl>
+      </section>
+    </section>
+
+    <section anchor="Acknowledgements" title="Acknowledgements">
+      <t>The authors would like to thank Rob Wilton, Nick Corran, Pierre
+      Francois Ahmed Elhassany, Jean Quilbeuf and Marco Tollini for their
+      review and valuable comments.</t>
+    </section>
+  </middle>
+
+  <back>
+    <references title="Normative References">
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.3688.xml'?>
+
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.6020.xml'?>
+
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.8340.xml'?>
+
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.8639.xml'?>
+
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.8641.xml'?>
+
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.8792.xml'?>
+
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.9196.xml'?>
+    </references>
+
+    <references title="Informative References">
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.8259.xml'?>
+
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml/reference.RFC.9232.xml'?>
+
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml-ids/reference.I-D.tgraf-netconf-notif-sequencing.xml'?>
+
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml-ids/reference.I-D.ietf-netconf-https-notif.xml'?>
+
+      <?rfc include='https://xml.resource.org/public/rfc/bibxml-ids/reference.I-D.ietf-netconf-udp-notif.xml'?>
+    </references>
+  </back>
+</rfc>
